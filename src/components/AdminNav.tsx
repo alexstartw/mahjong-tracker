@@ -10,6 +10,7 @@ interface Props {
 
 const navItems = [
   { href: "/admin", label: "總覽" },
+  { href: "/calendar", label: "行事曆" },
   { href: "/admin/sessions", label: "牌局記錄" },
   { href: "/admin/players", label: "玩家管理" },
 ];
@@ -22,7 +23,9 @@ export default function AdminNav({ user }: Props) {
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-6">
-            <span className="font-bold text-green-700 text-lg">🀄 麻將記錄</span>
+            <span className="font-bold text-green-700 text-lg">
+              🀄 麻將記錄
+            </span>
             <div className="flex gap-1">
               {navItems.map((item) => (
                 <Link
@@ -40,7 +43,9 @@ export default function AdminNav({ user }: Props) {
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-gray-500">{user?.name ?? user?.email}</span>
+            <span className="text-sm text-gray-500">
+              {user?.name ?? user?.email}
+            </span>
             <button
               onClick={() => signOut({ callbackUrl: "/login" })}
               className="text-sm text-gray-500 hover:text-red-500 transition-colors"
