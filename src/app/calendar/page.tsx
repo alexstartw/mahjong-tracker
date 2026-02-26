@@ -1,13 +1,49 @@
-export default function CalendarPage() {
+import { prisma } from "@/lib/prisma";
+import { buildCalendarDays, groupSessionsByDate } from "@/lib/calendar";
+import CalendarClient from "./CalendarClient";
+
+async function getCalendarData(year: number, month: number) {
+  const start = new Date(year, month, 1);
+  const end = new Date(year, month + 1, 0, 23, 59, 59);
+
+  const sessions = await prisma.gameSession.findMany({
+    where: { date: { gte: start, lte: end } },
+    orderBy: { date: "asc" },
+    include: { players: true },
+  });
+
+  return sessions.map((s) => ({
+    id: s.id,
+    date: s.date.toISOString(),
+    venue: s.venue,
+    stakes: s.stakes,
+    playerCount: s.players.length,
+  }));
+}
+
+interface Props {
+  searchParams: Promise<{ year?: string; month?: string }>;
+}
+
+export default async function CalendarPage({ searchParams }: Props) {
+  const params = await searchParams;
+  const now = new Date();
+  const year = parseInt(params.year ?? String(now.getFullYear()), 10);
+  const month = parseInt(params.month ?? String(now.getMonth()), 10);
+
+  const sessions = await getCalendarData(year, month);
+  const sessionMap = groupSessionsByDate(sessions);
+  const days = buildCalendarDays(year, month, sessionMap);
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="text-center">
-        <h1 className="text-3xl font-bold text-gray-800 mb-2">🀄 麻將記錄</h1>
-        <p className="text-gray-500">行事曆功能開發中...</p>
-        <a href="/login" className="mt-6 inline-block text-sm text-green-600 hover:underline">
-          後台登入
-        </a>
-      </div>
-    </div>
+    <CalendarClient
+      days={days.map((d) => ({
+        date: d.date.toISOString(),
+        isCurrentMonth: d.isCurrentMonth,
+        sessions: d.sessions,
+      }))}
+      year={year}
+      month={month}
+    />
   );
 }
