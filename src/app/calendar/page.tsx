@@ -9,7 +9,9 @@ async function getCalendarData(year: number, month: number) {
   const sessions = await prisma.gameSession.findMany({
     where: { date: { gte: start, lte: end } },
     orderBy: { date: "asc" },
-    include: { players: true },
+    include: {
+      players: { include: { player: true } },
+    },
   });
 
   return sessions.map((s) => ({
@@ -18,6 +20,9 @@ async function getCalendarData(year: number, month: number) {
     venue: s.venue,
     stakes: s.stakes,
     playerCount: s.players.length,
+    players: s.players
+      .map((sp) => ({ name: sp.player.name, amount: sp.amount }))
+      .sort((a, b) => b.amount - a.amount),
   }));
 }
 
