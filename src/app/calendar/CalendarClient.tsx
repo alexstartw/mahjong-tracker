@@ -74,21 +74,19 @@ export default function CalendarClient({ days, year, month }: Props) {
   const activeDay = days.find((d) => d.date.slice(0, 10) === activeDate);
 
   return (
-    <div className="min-h-screen" style={{ background: "#0b1a10" }}>
+    <div className="min-h-screen" style={{ background: "var(--background)" }}>
       {/* Header */}
-      <header className="sticky top-0 z-10 border-b" style={{ background: "#0b1a10cc", borderColor: "#2a4530", backdropFilter: "blur(12px)" }}>
+      <header className="sticky top-0 z-10 border-b" style={{ background: "color-mix(in srgb, var(--background) 85%, transparent)", borderColor: "var(--border)", backdropFilter: "blur(12px)" }}>
         <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
-          <span className="font-bold text-lg" style={{ fontFamily: "var(--font-playfair)", color: "#c9a84c" }}>
+          <span className="font-bold text-lg" style={{ fontFamily: "var(--font-serif)", color: "var(--primary)" }}>
             🀄 麻將記錄
           </span>
           <nav className="flex items-center gap-1">
-            <span className="px-4 py-1.5 rounded-lg text-sm" style={{ background: "#c9a84c20", color: "#c9a84c", border: "1px solid #c9a84c40" }}>
+            <span className="px-4 py-1.5 rounded-lg text-sm" style={{ background: "color-mix(in srgb, var(--primary) 12%, transparent)", color: "var(--primary)", border: "1px solid color-mix(in srgb, var(--primary) 25%, transparent)" }}>
               行事曆
             </span>
           </nav>
-          <Link href="/login" className="text-sm transition-colors" style={{ color: "#4a4335" }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = "#c9a84c")}
-            onMouseLeave={(e) => (e.currentTarget.style.color = "#4a4335")}>
+          <Link href="/login" className="text-sm transition-opacity hover:opacity-70" style={{ color: "var(--muted-foreground)" }}>
             後台登入 →
           </Link>
         </div>
@@ -100,7 +98,7 @@ export default function CalendarClient({ days, year, month }: Props) {
           <button onClick={() => navigate(-1)} className="btn-ghost w-10 h-10 flex items-center justify-center p-0 rounded-full">
             ←
           </button>
-          <h1 className="text-2xl font-bold" style={{ fontFamily: "var(--font-playfair)", color: "#c9a84c" }}>
+          <h1 className="text-2xl font-bold" style={{ fontFamily: "var(--font-serif)", color: "var(--primary)" }}>
             {year} · {MONTHS[month]}
           </h1>
           <button onClick={() => navigate(1)} className="btn-ghost w-10 h-10 flex items-center justify-center p-0 rounded-full">
@@ -109,11 +107,11 @@ export default function CalendarClient({ days, year, month }: Props) {
         </div>
 
         {/* Grid */}
-        <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid #2a4530" }}>
+        <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid var(--border)" }}>
           {/* Weekday headers */}
-          <div className="grid grid-cols-7 border-b" style={{ borderColor: "#2a4530", background: "#0f2214" }}>
+          <div className="grid grid-cols-7 border-b" style={{ borderColor: "var(--border)", background: "var(--muted)" }}>
             {WEEKDAYS.map((d) => (
-              <div key={d} className="py-3 text-center text-xs tracking-widest uppercase" style={{ color: "#4a4335" }}>
+              <div key={d} className="py-3 text-center text-xs tracking-widest uppercase" style={{ color: "var(--muted-foreground)" }}>
                 {d}
               </div>
             ))}
@@ -135,12 +133,12 @@ export default function CalendarClient({ days, year, month }: Props) {
                   onClick={(e) => handleDayClick(e, day)}
                   className="min-h-[80px] p-2 text-left border-b border-r transition-colors"
                   style={{
-                    borderColor: "#2a4530",
-                    background: isActive ? "#1a2e20" : "transparent",
+                    borderColor: "var(--border)",
+                    background: isActive ? "var(--accent)" : "transparent",
                     cursor: hasSessions ? "pointer" : "default",
                   }}
                   onMouseEnter={(e) => {
-                    if (hasSessions && !isActive) e.currentTarget.style.background = "#122018";
+                    if (hasSessions && !isActive) e.currentTarget.style.background = "var(--muted)";
                   }}
                   onMouseLeave={(e) => {
                     if (!isActive) e.currentTarget.style.background = "transparent";
@@ -149,9 +147,9 @@ export default function CalendarClient({ days, year, month }: Props) {
                   <span
                     className="inline-flex w-7 h-7 items-center justify-center rounded-full text-sm font-medium mb-1"
                     style={{
-                      fontFamily: "var(--font-playfair)",
-                      background: isToday ? "#c9a84c" : "transparent",
-                      color: isToday ? "#0b1a10" : day.isCurrentMonth ? "#f0ead8" : "#2a4530",
+                      fontFamily: "var(--font-serif)",
+                      background: isToday ? "var(--primary)" : "transparent",
+                      color: isToday ? "var(--primary-foreground)" : day.isCurrentMonth ? "var(--foreground)" : "var(--border)",
                       fontWeight: isToday ? "700" : "400",
                     }}
                   >
@@ -162,7 +160,7 @@ export default function CalendarClient({ days, year, month }: Props) {
                     <div className="space-y-1 mt-1">
                       {day.sessions.map((s) => (
                         <div key={s.id} className="text-xs rounded px-1.5 py-0.5 truncate"
-                          style={{ background: "#c9a84c20", color: "#c9a84c", border: "1px solid #c9a84c30" }}>
+                          style={{ background: "color-mix(in srgb, var(--primary) 12%, transparent)", color: "var(--primary)", border: "1px solid color-mix(in srgb, var(--primary) 20%, transparent)" }}>
                           {s.venue}
                         </div>
                       ))}
@@ -174,7 +172,7 @@ export default function CalendarClient({ days, year, month }: Props) {
           </div>
         </div>
 
-        <p className="text-center mt-4 text-xs" style={{ color: "#2a4530" }}>
+        <p className="text-center mt-4 text-xs" style={{ color: "var(--muted-foreground)" }}>
           點擊有牌局的日期查看詳情
         </p>
       </main>
@@ -184,45 +182,45 @@ export default function CalendarClient({ days, year, month }: Props) {
         <div
           ref={popupRef}
           className="fixed z-50 w-80 animate-fade-up"
-          style={{ top: popupPos.top, left: Math.max(16, popupPos.left), background: "#122018", border: "1px solid #c9a84c40", borderRadius: "1rem", boxShadow: "0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px #c9a84c10" }}
+          style={{ top: popupPos.top, left: Math.max(16, popupPos.left), background: "var(--card)", border: "1px solid color-mix(in srgb, var(--primary) 25%, transparent)", borderRadius: "1rem", boxShadow: "0 20px 60px color-mix(in srgb, var(--shadow-color) 30%, transparent), 0 0 0 1px color-mix(in srgb, var(--primary) 8%, transparent)" }}
         >
-          <div className="px-5 py-4 flex items-center justify-between border-b" style={{ borderColor: "#2a4530" }}>
-            <h3 className="font-semibold" style={{ fontFamily: "var(--font-playfair)", color: "#c9a84c" }}>
+          <div className="px-5 py-4 flex items-center justify-between border-b" style={{ borderColor: "var(--border)" }}>
+            <h3 className="font-semibold" style={{ fontFamily: "var(--font-serif)", color: "var(--primary)" }}>
               {new Date(activeDay.date + "T00:00:00").toLocaleDateString("zh-TW", { month: "long", day: "numeric" })}
             </h3>
             <button onClick={() => setActiveDate(null)} className="w-6 h-6 flex items-center justify-center rounded-full transition-colors text-sm"
-              style={{ color: "#4a4335" }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = "#f0ead8")}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "#4a4335")}>
+              style={{ color: "var(--muted-foreground)" }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = "var(--foreground)")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--muted-foreground)")}>
               ×
             </button>
           </div>
 
-          <div className="max-h-80 overflow-y-auto divide-y" style={{ borderColor: "#2a4530" }}>
+          <div className="max-h-80 overflow-y-auto divide-y" style={{ borderColor: "var(--border)" }}>
             {activeDay.sessions.map((session) => {
               const winners = session.players.filter((p) => p.amount > 0);
               const losers = session.players.filter((p) => p.amount < 0);
               return (
                 <div key={session.id} className="px-5 py-4">
                   <div className="flex items-center gap-2 mb-3">
-                    <span className="text-sm font-medium" style={{ color: "#f0ead8" }}>📍 {session.venue}</span>
-                    <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: "#1a2e20", color: "#a89b7e" }}>
+                    <span className="text-sm font-medium" style={{ color: "var(--foreground)" }}>📍 {session.venue}</span>
+                    <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: "var(--muted)", color: "var(--muted-foreground)" }}>
                       {session.stakes}
                     </span>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
-                    {[{ label: "贏", list: winners, color: "#4ade80", glow: "glow-win" },
-                      { label: "輸", list: losers, color: "#f87171", glow: "glow-loss" }].map(({ label, list, color, glow }) => (
+                    {[{ label: "贏", list: winners, color: "var(--win)" },
+                      { label: "輸", list: losers, color: "var(--loss)" }].map(({ label, list, color }) => (
                       <div key={label}>
-                        <p className="text-xs mb-2 tracking-widest uppercase" style={{ color: "#4a4335" }}>{label}</p>
+                        <p className="text-xs mb-2 tracking-widest uppercase" style={{ color: "var(--muted-foreground)" }}>{label}</p>
                         <div className="space-y-1.5">
-                          {list.length === 0 ? <p className="text-xs" style={{ color: "#2a4530" }}>—</p> :
+                          {list.length === 0 ? <p className="text-xs" style={{ color: "var(--border)" }}>—</p> :
                             list.map((p) => (
                               <Link key={p.id} href={`/players/${p.id}`}
-                                className={`flex items-center justify-between text-xs group`}
+                                className="flex items-center justify-between text-xs group"
                                 onClick={() => setActiveDate(null)}>
-                                <span className="group-hover:underline" style={{ color: "#a89b7e" }}>{p.name}</span>
-                                <span className={`font-bold ${glow}`} style={{ color }}>
+                                <span className="group-hover:underline" style={{ color: "var(--muted-foreground)" }}>{p.name}</span>
+                                <span className="font-bold" style={{ color }}>
                                   {p.amount > 0 ? "+" : ""}{p.amount.toLocaleString()}
                                 </span>
                               </Link>

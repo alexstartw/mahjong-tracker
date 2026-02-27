@@ -65,14 +65,14 @@ export default async function AdminPage() {
       {/* Greeting */}
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm mb-1" style={{ color: "#a89b7e" }}>
+          <p className="text-sm mb-1" style={{ color: "var(--muted-foreground)" }}>
             {greeting}，{session?.user?.name ?? "管理員"}
           </p>
-          <h1 className="text-3xl font-bold" style={{ fontFamily: "var(--font-playfair)", color: "#c9a84c" }}>
+          <h1 className="text-3xl font-bold" style={{ fontFamily: "var(--font-serif)", color: "var(--primary)" }}>
             牌局總覽
           </h1>
         </div>
-        <Link href="/admin/sessions/new" className="btn-gold px-6 py-3 text-sm">
+        <Link href="/admin/sessions/new" className="btn-primary px-6 py-3 text-sm">
           + 新增牌局
         </Link>
       </div>
@@ -80,32 +80,32 @@ export default async function AdminPage() {
       {/* Stat cards */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         {[
-          { label: "累積場次", value: stats.totalSessions, unit: "場", accent: "#c9a84c" },
-          { label: "本月場次", value: stats.thisMonthSessions, unit: "場", accent: "#e8c96d" },
-          { label: "玩家人數", value: stats.totalPlayers, unit: "人", accent: "#a89b7e" },
+          { label: "累積場次", value: stats.totalSessions, unit: "場", accent: "var(--primary)" },
+          { label: "本月場次", value: stats.thisMonthSessions, unit: "場", accent: "var(--primary)" },
+          { label: "玩家人數", value: stats.totalPlayers, unit: "人", accent: "var(--muted-foreground)" },
           {
             label: "本月最佳",
             value: stats.topWinner?.name ?? "—",
             sub: stats.topWinner ? `+${stats.topWinner.total.toLocaleString()}` : "",
-            accent: "#4ade80",
+            accent: "var(--win)",
           },
         ].map((stat) => (
           <div key={stat.label} className="card p-5">
-            <p className="text-xs tracking-widest uppercase mb-3" style={{ color: "#4a4335" }}>
+            <p className="text-xs tracking-widest uppercase mb-3" style={{ color: "var(--muted-foreground)" }}>
               {stat.label}
             </p>
             {"unit" in stat ? (
-              <p className="text-4xl font-bold" style={{ fontFamily: "var(--font-playfair)", color: stat.accent }}>
+              <p className="text-4xl font-bold" style={{ fontFamily: "var(--font-serif)", color: stat.accent }}>
                 {stat.value}
-                <span className="text-lg ml-1" style={{ color: "#a89b7e" }}>{stat.unit}</span>
+                <span className="text-lg ml-1" style={{ color: "var(--muted-foreground)" }}>{stat.unit}</span>
               </p>
             ) : (
               <div>
-                <p className="text-xl font-bold" style={{ fontFamily: "var(--font-playfair)", color: stat.accent }}>
+                <p className="text-xl font-bold" style={{ fontFamily: "var(--font-serif)", color: stat.accent }}>
                   {stat.value}
                 </p>
                 {stat.sub && (
-                  <p className="text-sm mt-1 glow-win" style={{ color: "#4ade80" }}>{stat.sub}</p>
+                  <p className="text-sm mt-1" style={{ color: "var(--win)" }}>{stat.sub}</p>
                 )}
               </div>
             )}
@@ -115,41 +115,41 @@ export default async function AdminPage() {
 
       {/* Recent sessions */}
       <div className="card overflow-hidden">
-        <div className="px-6 py-5 flex items-center justify-between border-b" style={{ borderColor: "#2a4530" }}>
-          <h2 className="font-semibold" style={{ fontFamily: "var(--font-playfair)", color: "#c9a84c" }}>
+        <div className="px-6 py-5 flex items-center justify-between border-b" style={{ borderColor: "var(--border)" }}>
+          <h2 className="font-semibold" style={{ fontFamily: "var(--font-serif)", color: "var(--primary)" }}>
             最近牌局
           </h2>
-          <Link href="/admin/sessions" className="text-xs" style={{ color: "#a89b7e" }}>
+          <Link href="/admin/sessions" className="text-xs" style={{ color: "var(--muted-foreground)" }}>
             查看全部 →
           </Link>
         </div>
 
         {stats.recentSessions.length === 0 ? (
           <div className="px-6 py-12 text-center">
-            <p className="mb-4" style={{ color: "#4a4335" }}>尚無牌局記錄</p>
-            <Link href="/admin/sessions/new" className="btn-gold text-sm px-5 py-2">
+            <p className="mb-4" style={{ color: "var(--muted-foreground)" }}>尚無牌局記錄</p>
+            <Link href="/admin/sessions/new" className="btn-primary text-sm px-5 py-2">
               開始記錄
             </Link>
           </div>
         ) : (
-          <div className="divide-y" style={{ borderColor: "#2a4530" }}>
+          <div className="divide-y" style={{ borderColor: "var(--border)" }}>
             {stats.recentSessions.map((s) => {
               const winners = s.players.filter((p) => p.amount > 0);
               const losers = s.players.filter((p) => p.amount < 0);
               return (
                 <div key={s.id} className="px-6 py-4 flex items-start gap-6">
                   <div className="shrink-0 text-center w-12">
-                    <p className="text-lg font-bold" style={{ fontFamily: "var(--font-playfair)", color: "#c9a84c" }}>
+                    <p className="text-lg font-bold" style={{ fontFamily: "var(--font-serif)", color: "var(--primary)" }}>
                       {new Date(s.date).getUTCDate()}
                     </p>
-                    <p className="text-xs" style={{ color: "#4a4335" }}>
+                    <p className="text-xs" style={{ color: "var(--muted-foreground)" }}>
                       {new Date(s.date).toLocaleDateString("zh-TW", { month: "short", timeZone: "UTC" })}
                     </p>
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="text-sm font-medium" style={{ color: "#f0ead8" }}>📍 {s.venue}</span>
-                      <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: "#1a2e20", color: "#a89b7e" }}>
+                      <span className="text-sm font-medium" style={{ color: "var(--foreground)" }}>📍 {s.venue}</span>
+                      <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: "var(--muted)", color: "var(--muted-foreground)" }}>
                         {s.stakes}
                       </span>
                     </div>
@@ -158,8 +158,8 @@ export default async function AdminPage() {
                         {winners.map((p) => (
                           <Link key={p.id} href={`/players/${p.id}`}
                             className="flex items-center gap-2 text-xs hover:opacity-80 transition-opacity">
-                            <span style={{ color: "#a89b7e" }}>{p.name}</span>
-                            <span className="glow-win font-semibold" style={{ color: "#4ade80" }}>+{p.amount.toLocaleString()}</span>
+                            <span style={{ color: "var(--muted-foreground)" }}>{p.name}</span>
+                            <span className="font-semibold" style={{ color: "var(--win)" }}>+{p.amount.toLocaleString()}</span>
                           </Link>
                         ))}
                       </div>
@@ -167,8 +167,8 @@ export default async function AdminPage() {
                         {losers.map((p) => (
                           <Link key={p.id} href={`/players/${p.id}`}
                             className="flex items-center gap-2 text-xs hover:opacity-80 transition-opacity">
-                            <span style={{ color: "#a89b7e" }}>{p.name}</span>
-                            <span className="glow-loss font-semibold" style={{ color: "#f87171" }}>{p.amount.toLocaleString()}</span>
+                            <span style={{ color: "var(--muted-foreground)" }}>{p.name}</span>
+                            <span className="font-semibold" style={{ color: "var(--loss)" }}>{p.amount.toLocaleString()}</span>
                           </Link>
                         ))}
                       </div>

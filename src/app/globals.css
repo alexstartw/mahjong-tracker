@@ -1,141 +1,240 @@
 @import "tailwindcss";
 
-@theme {
-  /* ── 深夜牌桌色系 ── */
-  --color-felt: #0b1a10;
-  --color-card: #122018;
-  --color-card-hover: #1a2e20;
-  --color-edge: #2a4530;
-  --color-edge-bright: #3d6347;
+/* ── Design tokens ── */
+:root {
+  --card: #F8F4EE;
+  --ring: #B45309;
+  --input: #E4D9BC;
+  --muted: #F1E9DA;
+  --accent: #f2daba;
+  --border: #E4D9BC;
+  --radius: 0.3rem;
+  --chart-1: #B45309;
+  --chart-2: #78716C;
+  --chart-3: #A16207;
+  --chart-4: #78716C;
+  --chart-5: #CA8A04;
+  --popover: #F8F4EE;
+  --primary: #B45309;
+  --sidebar: #F1E9DA;
+  --font-mono: Fira Code, monospace;
+  --font-sans: Oxanium, sans-serif;
+  --secondary: #E4C090;
+  --background: #FDFBF7;
+  --font-serif: Merriweather, serif;
+  --foreground: #4A3B33;
+  --destructive: #991B1B;
+  --shadow-blur: 3px;
+  --shadow-color: hsl(28 18% 25%);
+  --sidebar-ring: #B45309;
+  --shadow-spread: 0px;
+  --shadow-opacity: 0.18;
+  --sidebar-accent: #A16207;
+  --sidebar-border: #E4D9BC;
+  --card-foreground: #4A3B33;
+  --shadow-offset-x: 0px;
+  --shadow-offset-y: 2px;
+  --sidebar-primary: #B45309;
+  --muted-foreground: #78716C;
+  --accent-foreground: #57534E;
+  --popover-foreground: #4A3B33;
+  --primary-foreground: #FFFFFF;
+  --sidebar-foreground: #4A3B33;
+  --secondary-foreground: #57534E;
+  --destructive-foreground: #FFFFFF;
+  --sidebar-accent-foreground: #FFFFFF;
+  --sidebar-primary-foreground: #FFFFFF;
 
-  --color-gold: #c9a84c;
-  --color-gold-light: #e8c96d;
-  --color-gold-dim: #7a6330;
-
-  --color-ivory: #f0ead8;
-  --color-ivory-dim: #a89b7e;
-  --color-ivory-faint: #4a4335;
-
-  --color-win: #4ade80;
-  --color-win-dim: #166534;
-  --color-loss: #f87171;
-  --color-loss-dim: #7f1d1d;
-
-  /* ── 字型 ── */
-  --font-display: var(--font-playfair), Georgia, serif;
-  --font-body: var(--font-noto), "Noto Serif TC", serif;
+  /* Semantic win/loss */
+  --win: #15803D;
+  --win-bg: #DCFCE7;
+  --loss: #991B1B;
+  --loss-bg: #FEE2E2;
 }
 
-* {
-  box-sizing: border-box;
+.dark {
+  --card: #292524;
+  --ring: #F97316;
+  --input: #44403C;
+  --muted: #292524;
+  --accent: #1e4252;
+  --border: #44403C;
+  --radius: 0.3rem;
+  --chart-1: #F97316;
+  --chart-2: #0EA5E9;
+  --chart-3: #EAB308;
+  --chart-4: #A8A29E;
+  --chart-5: #78716C;
+  --popover: #292524;
+  --primary: #F97316;
+  --sidebar: #292524;
+  --secondary: #57534E;
+  --background: #1C1917;
+  --foreground: #F5F5F4;
+  --destructive: #DC2626;
+  --shadow-color: hsl(0 0% 5%);
+  --sidebar-ring: #F97316;
+  --sidebar-accent: #0EA5E9;
+  --sidebar-border: #44403C;
+  --card-foreground: #F5F5F4;
+  --sidebar-primary: #F97316;
+  --muted-foreground: #A8A29E;
+  --accent-foreground: #E7E5E4;
+  --popover-foreground: #F5F5F4;
+  --primary-foreground: #FFFFFF;
+  --sidebar-foreground: #F5F5F4;
+  --secondary-foreground: #E7E5E4;
+  --destructive-foreground: #FFFFFF;
+  --sidebar-accent-foreground: #0C2A4D;
+  --sidebar-primary-foreground: #FFFFFF;
+
+  --win: #4ade80;
+  --win-bg: #14532D;
+  --loss: #f87171;
+  --loss-bg: #450A0A;
 }
 
-html {
-  scroll-behavior: smooth;
+@theme inline {
+  --color-card: var(--card);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-border: var(--border);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-popover: var(--popover);
+  --color-primary: var(--primary);
+  --color-sidebar: var(--sidebar);
+  --color-secondary: var(--secondary);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-destructive: var(--destructive);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-card-foreground: var(--card-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-win: var(--win);
+  --color-win-bg: var(--win-bg);
+  --color-loss: var(--loss);
+  --color-loss-bg: var(--loss-bg);
 }
 
+/* ── Base ── */
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
 body {
-  background-color: #0b1a10;
-  color: #f0ead8;
-  font-family: var(--font-body);
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }
 
-/* ── 金色發光效果 ── */
-.glow-gold {
-  text-shadow: 0 0 20px rgba(201, 168, 76, 0.5);
-}
-.glow-win {
-  text-shadow: 0 0 16px rgba(74, 222, 128, 0.6);
-}
-.glow-loss {
-  text-shadow: 0 0 16px rgba(248, 113, 113, 0.6);
-}
-
-/* ── 卡片基礎樣式 ── */
+/* ── Card ── */
 .card {
-  background: #122018;
-  border: 1px solid #2a4530;
-  border-radius: 1rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-offset-x) var(--shadow-offset-y) var(--shadow-blur) var(--shadow-spread) color-mix(in srgb, var(--shadow-color) calc(var(--shadow-opacity) * 100%), transparent);
 }
-.card-gold {
-  background: #122018;
-  border: 1px solid #c9a84c40;
-  border-radius: 1rem;
-  box-shadow: 0 0 0 1px #c9a84c10, inset 0 1px 0 #c9a84c20;
+.card-primary {
+  background: var(--card);
+  border: 1px solid var(--primary);
+  border-radius: var(--radius);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary) 15%, transparent);
 }
 
-/* ── 輸入框 ── */
-.input-dark {
-  background: #0b1a10;
-  border: 1px solid #2a4530;
-  color: #f0ead8;
-  border-radius: 0.5rem;
+/* ── Input ── */
+.input-field {
+  background: var(--input);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+  border-radius: var(--radius);
   padding: 0.625rem 1rem;
   width: 100%;
   outline: none;
-  transition: border-color 0.15s;
-  font-family: var(--font-body);
+  transition: border-color 0.15s, box-shadow 0.15s;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
 }
-.input-dark::placeholder {
-  color: #4a4335;
-}
-.input-dark:focus {
-  border-color: #c9a84c;
-  box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.12);
+.input-field::placeholder { color: var(--muted-foreground); opacity: 0.6; }
+.input-field:focus {
+  border-color: var(--ring);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) 20%, transparent);
 }
 
-/* ── 主按鈕 ── */
-.btn-gold {
-  background: #c9a84c;
-  color: #0b1a10;
-  font-weight: 700;
-  border-radius: 0.5rem;
+/* ── Primary button ── */
+.btn-primary {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-weight: 600;
+  border-radius: var(--radius);
   padding: 0.625rem 1.5rem;
-  transition: background 0.15s, transform 0.1s;
+  transition: opacity 0.15s, transform 0.1s;
   cursor: pointer;
-  font-family: var(--font-body);
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
   letter-spacing: 0.02em;
+  border: none;
 }
-.btn-gold:hover {
-  background: #e8c96d;
-}
-.btn-gold:active {
-  transform: scale(0.98);
-}
-.btn-gold:disabled {
-  background: #7a6330;
-  color: #4a4335;
-  cursor: not-allowed;
-}
+.btn-primary:hover { opacity: 0.9; }
+.btn-primary:active { transform: scale(0.98); }
+.btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
 
-/* ── 次要按鈕 ── */
+/* ── Ghost button ── */
 .btn-ghost {
-  border: 1px solid #2a4530;
-  color: #a89b7e;
+  border: 1px solid var(--border);
+  color: var(--muted-foreground);
   background: transparent;
-  border-radius: 0.5rem;
+  border-radius: var(--radius);
   padding: 0.625rem 1.5rem;
-  transition: border-color 0.15s, color 0.15s;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
   cursor: pointer;
-  font-family: var(--font-body);
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
 }
 .btn-ghost:hover {
-  border-color: #c9a84c;
-  color: #c9a84c;
+  border-color: var(--primary);
+  color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 6%, transparent);
 }
 
-/* ── 捲軸美化 ── */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: #0b1a10; }
-::-webkit-scrollbar-thumb { background: #2a4530; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #c9a84c50; }
+/* ── Win / Loss badges ── */
+.badge-win {
+  background: var(--win-bg);
+  color: var(--win);
+  font-weight: 700;
+  font-family: var(--font-serif);
+}
+.badge-loss {
+  background: var(--loss-bg);
+  color: var(--loss);
+  font-weight: 700;
+  font-family: var(--font-serif);
+}
 
-/* ── Tile 動畫（行事曆格子） ── */
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--muted); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+/* ── Calendar tile animation ── */
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-.animate-fade-up {
-  animation: fadeUp 0.3s ease forwards;
-}
+.animate-fade-up { animation: fadeUp 0.2s ease forwards; }

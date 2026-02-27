@@ -1,18 +1,18 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Noto_Serif_TC } from "next/font/google";
+import { Oxanium, Merriweather } from "next/font/google";
 import { SessionProvider } from "next-auth/react";
 import "./globals.css";
 
-const playfair = Playfair_Display({
-  variable: "--font-playfair",
+const oxanium = Oxanium({
+  variable: "--font-sans",
   subsets: ["latin"],
-  weight: ["400", "600", "700"],
+  weight: ["400", "500", "600", "700"],
 });
 
-const noto = Noto_Serif_TC({
-  variable: "--font-noto",
+const merriweather = Merriweather({
+  variable: "--font-serif",
   subsets: ["latin"],
-  weight: ["400", "500", "700"],
+  weight: ["400", "700"],
 });
 
 export const metadata: Metadata = {
@@ -27,7 +27,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-TW">
-      <body className={`${playfair.variable} ${noto.variable}`}>
+      <body className={`${oxanium.variable} ${merriweather.variable}`}>
         <SessionProvider>{children}</SessionProvider>
       </body>
     </html>
