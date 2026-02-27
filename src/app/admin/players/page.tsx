@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { auth } from "@/lib/auth";
 import PlayersClient from "./PlayersClient";
 
 async function getPlayersWithStats() {
@@ -20,6 +21,6 @@ async function getPlayersWithStats() {
 }
 
 export default async function PlayersPage() {
-  const players = await getPlayersWithStats();
-  return <PlayersClient initialPlayers={players} />;
+  const [players, session] = await Promise.all([getPlayersWithStats(), auth()]);
+  return <PlayersClient initialPlayers={players} isLoggedIn={!!session} />;
 }

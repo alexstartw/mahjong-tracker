@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import Link from "next/link";
-import { Plus } from "lucide-react";
+import { Plus, Lock } from "lucide-react";
 
 async function getStats() {
   const now = new Date();
@@ -65,6 +65,7 @@ async function getStats() {
 
 export default async function AdminPage() {
   const [session, stats] = await Promise.all([auth(), getStats()]);
+  const isLoggedIn = !!session;
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "早安" : hour < 18 ? "午安" : "晚安";
 
@@ -86,9 +87,15 @@ export default async function AdminPage() {
             總覽
           </h1>
         </div>
-        <Link href="/admin/sessions/new" className="btn-primary">
-          <Plus size={14} /> 新增牌局
-        </Link>
+        {isLoggedIn ? (
+          <Link href="/admin/sessions/new" className="btn-primary">
+            <Plus size={14} /> 新增牌局
+          </Link>
+        ) : (
+          <Link href="/login" className="btn-ghost text-xs">
+            <Lock size={12} /> 登入管理
+          </Link>
+        )}
       </div>
 
       {/* Stat cards */}

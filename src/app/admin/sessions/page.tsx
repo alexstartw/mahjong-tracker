@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { auth } from "@/lib/auth";
 import Link from "next/link";
 import SessionsClient from "./SessionsClient";
 import { Plus } from "lucide-react";
@@ -24,18 +25,24 @@ async function getSessions() {
 }
 
 export default async function SessionsPage() {
-  const sessions = await getSessions();
+  const [sessions, session] = await Promise.all([getSessions(), auth()]);
+  const isLoggedIn = !!session;
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold tracking-tight" style={{ color: "var(--foreground)" }}>
+        <h1
+          className="text-2xl font-semibold tracking-tight"
+          style={{ color: "var(--foreground)" }}
+        >
           牌局記錄
         </h1>
-        <Link href="/admin/sessions/new" className="btn-primary">
-          <Plus size={14} /> 新增牌局
-        </Link>
+        {isLoggedIn && (
+          <Link href="/admin/sessions/new" className="btn-primary">
+            <Plus size={14} /> 新增牌局
+          </Link>
+        )}
       </div>
-      <SessionsClient initialSessions={sessions} />
+      <SessionsClient initialSessions={sessions} isLoggedIn={isLoggedIn} />
     </div>
   );
 }
