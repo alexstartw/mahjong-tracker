@@ -7,7 +7,8 @@ type SessionData = {
   id: string;
   date: string;
   venue: string;
-  stakes: string;
+  base: number | null;
+  unit: number | null;
   playerCount: number;
   players: SessionPlayer[];
 };
@@ -34,7 +35,8 @@ async function getCalendarData(year: number, month: number) {
     id: s.id,
     date: s.date.toISOString(),
     venue: s.venue,
-    stakes: s.stakes,
+    base: s.base,
+    unit: s.unit,
     playerCount: s.players.length,
     players: s.players
       .map((sp) => ({

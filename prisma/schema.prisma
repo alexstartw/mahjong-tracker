@@ -29,7 +29,9 @@ model GameSession {
   id        String          @id @default(cuid())
   date      DateTime
   venue     String
-  stakes    String
+  stakes    String?
+  base      Int?
+  unit      Int?
   note      String?
   createdAt DateTime        @default(now())
   updatedAt DateTime        @updatedAt

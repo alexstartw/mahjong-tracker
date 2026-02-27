@@ -14,7 +14,8 @@ interface SessionPlayer {
 interface SessionSummary {
   id: string;
   venue: string;
-  stakes: string;
+  base: number | null;
+  unit: number | null;
   playerCount: number;
   players: SessionPlayer[];
 }
@@ -433,15 +434,22 @@ export default function CalendarClient({
                     >
                       {session.venue}
                     </span>
-                    <span
-                      className="text-[10px] px-1.5 py-0.5 rounded"
-                      style={{
-                        background: "var(--muted)",
-                        color: "var(--muted-foreground)",
-                      }}
-                    >
-                      {session.stakes}
-                    </span>
+                    {(session.base != null || session.unit != null) && (
+                      <span
+                        className="text-[10px] px-1.5 py-0.5 rounded"
+                        style={{
+                          background: "var(--muted)",
+                          color: "var(--muted-foreground)",
+                        }}
+                      >
+                        {[
+                          session.base != null && `底 ${session.base}`,
+                          session.unit != null && `台 ${session.unit}`,
+                        ]
+                          .filter(Boolean)
+                          .join(" / ")}
+                      </span>
+                    )}
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
