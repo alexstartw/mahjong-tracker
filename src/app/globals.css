@@ -184,6 +184,10 @@ body {
 /* ── Divider ── */
 .divider { height: 1px; background: var(--border); }
 
+/* ── Muted link with hover ── */
+.link-muted { color: var(--muted-foreground); transition: color 0.15s ease; }
+.link-muted:hover { color: var(--foreground); }
+
 /* ── Scrollbar ── */
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
