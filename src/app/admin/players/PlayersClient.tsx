@@ -2,25 +2,17 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-
-interface PlayerStats {
-  sessionCount: number;
-  totalAmount: number;
-}
+import Link from "next/link";
 
 interface Player {
   id: string;
   name: string;
   isGuest: boolean;
   createdAt: string;
-  stats: PlayerStats;
+  stats: { sessionCount: number; totalAmount: number };
 }
 
-interface Props {
-  initialPlayers: Player[];
-}
-
-export default function PlayersClient({ initialPlayers }: Props) {
+export default function PlayersClient({ initialPlayers }: { initialPlayers: Player[] }) {
   const router = useRouter();
   const [newName, setNewName] = useState("");
   const [isGuest, setIsGuest] = useState(false);
@@ -31,166 +23,116 @@ export default function PlayersClient({ initialPlayers }: Props) {
     e.preventDefault();
     setError("");
     setLoading(true);
-
     const res = await fetch("/api/players", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name: newName, isGuest }),
     });
-
     setLoading(false);
-
-    if (!res.ok) {
-      const data = await res.json();
-      setError(data.error ?? "新增失敗");
-      return;
-    }
-
+    if (!res.ok) { const d = await res.json(); setError(d.error ?? "新增失敗"); return; }
     setNewName("");
     setIsGuest(false);
     router.refresh();
   }
 
   async function handleDelete(id: string, name: string) {
-    if (!confirm(`確定要刪除玩家「${name}」嗎？`)) return;
-
+    if (!confirm(`確定要刪除「${name}」嗎？`)) return;
     await fetch(`/api/players/${id}`, { method: "DELETE" });
     router.refresh();
   }
 
-  const regularPlayers = initialPlayers.filter((p) => !p.isGuest);
-  const guestPlayers = initialPlayers.filter((p) => p.isGuest);
+  const regular = initialPlayers.filter((p) => !p.isGuest);
+  const guests = initialPlayers.filter((p) => p.isGuest);
 
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-800">玩家管理</h1>
-        <span className="text-sm text-gray-500">
-          共 {initialPlayers.length} 位玩家
-        </span>
+        <h1 className="text-3xl font-bold" style={{ fontFamily: "var(--font-playfair)", color: "#c9a84c" }}>
+          玩家管理
+        </h1>
+        <span className="text-sm" style={{ color: "#4a4335" }}>共 {initialPlayers.length} 位</span>
       </div>
 
       {/* 新增玩家 */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-        <h2 className="text-base font-semibold text-gray-700 mb-4">新增玩家</h2>
+      <div className="card p-6">
+        <h2 className="text-xs tracking-widest uppercase mb-4" style={{ color: "#4a4335" }}>新增玩家</h2>
         <form onSubmit={handleAdd} className="flex items-end gap-4">
           <div className="flex-1">
-            <label className="block text-sm text-gray-600 mb-1">玩家名稱</label>
-            <input
-              type="text"
-              value={newName}
-              onChange={(e) => setNewName(e.target.value)}
-              required
-              placeholder="輸入名稱"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-            />
+            <input type="text" value={newName} onChange={(e) => setNewName(e.target.value)} required placeholder="輸入玩家名稱" className="input-dark" />
           </div>
-          <div className="flex items-center gap-2 pb-2">
-            <input
-              type="checkbox"
-              id="isGuest"
-              checked={isGuest}
-              onChange={(e) => setIsGuest(e.target.checked)}
-              className="w-4 h-4 accent-green-600"
-            />
-            <label htmlFor="isGuest" className="text-sm text-gray-600">
-              臨時玩家
-            </label>
-          </div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="px-6 py-2 bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white font-medium rounded-lg transition-colors"
-          >
-            新增
+          <label className="flex items-center gap-2 cursor-pointer pb-0.5 shrink-0">
+            <div className="relative">
+              <input type="checkbox" checked={isGuest} onChange={(e) => setIsGuest(e.target.checked)} className="sr-only" />
+              <div className="w-10 h-5 rounded-full transition-colors" style={{ background: isGuest ? "#c9a84c" : "#1a2e20", border: "1px solid #2a4530" }} />
+              <div className="absolute top-0.5 left-0.5 w-4 h-4 rounded-full transition-transform" style={{ background: "#f0ead8", transform: isGuest ? "translateX(20px)" : "translateX(0)" }} />
+            </div>
+            <span className="text-sm" style={{ color: "#a89b7e" }}>臨時</span>
+          </label>
+          <button type="submit" disabled={loading} className="btn-gold px-5 py-2 shrink-0">
+            {loading ? "…" : "新增"}
           </button>
         </form>
-        {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+        {error && <p className="text-sm mt-3" style={{ color: "#f87171" }}>{error}</p>}
       </div>
 
-      <PlayerTable
-        title="固定玩家"
-        players={regularPlayers}
-        onDelete={handleDelete}
-      />
+      {/* 固定玩家 */}
+      <PlayerTable title="固定玩家" players={regular} onDelete={handleDelete} />
 
-      {guestPlayers.length > 0 && (
-        <PlayerTable
-          title="臨時玩家"
-          players={guestPlayers}
-          onDelete={handleDelete}
-        />
+      {/* 臨時玩家 */}
+      {guests.length > 0 && (
+        <PlayerTable title="臨時玩家" players={guests} onDelete={handleDelete} />
       )}
     </div>
   );
 }
 
-function PlayerTable({
-  title,
-  players,
-  onDelete,
-}: {
+function PlayerTable({ title, players, onDelete }: {
   title: string;
   players: Player[];
   onDelete: (id: string, name: string) => void;
 }) {
-  if (players.length === 0) {
-    return (
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-        <h2 className="text-base font-semibold text-gray-700 mb-4">{title}</h2>
-        <p className="text-gray-400 text-sm">尚無玩家</p>
-      </div>
-    );
-  }
-
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-      <h2 className="text-base font-semibold text-gray-700 mb-4">{title}</h2>
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="text-left text-gray-500 border-b border-gray-100">
-              <th className="pb-3 font-medium">名稱</th>
-              <th className="pb-3 font-medium text-center">場次</th>
-              <th className="pb-3 font-medium text-right">總輸贏</th>
-              <th className="pb-3 font-medium text-right">操作</th>
-            </tr>
-          </thead>
-          <tbody>
-            {players.map((player) => (
-              <tr
-                key={player.id}
-                className="border-b border-gray-50 last:border-0"
-              >
-                <td className="py-3 font-medium text-gray-800">{player.name}</td>
-                <td className="py-3 text-center text-gray-500">
-                  {player.stats.sessionCount}
-                </td>
-                <td
-                  className={`py-3 text-right font-medium ${
-                    player.stats.totalAmount > 0
-                      ? "text-green-600"
-                      : player.stats.totalAmount < 0
-                        ? "text-red-500"
-                        : "text-gray-400"
-                  }`}
-                >
-                  {player.stats.totalAmount > 0 ? "+" : ""}
-                  {player.stats.totalAmount.toLocaleString()}
-                </td>
-                <td className="py-3 text-right">
-                  <button
-                    onClick={() => onDelete(player.id, player.name)}
-                    className="text-gray-400 hover:text-red-500 transition-colors text-xs"
-                  >
-                    刪除
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <div className="card overflow-hidden">
+      <div className="px-6 py-4 border-b flex items-center justify-between" style={{ borderColor: "#2a4530" }}>
+        <h2 className="font-semibold" style={{ fontFamily: "var(--font-playfair)", color: "#c9a84c" }}>{title}</h2>
+        <span className="text-xs" style={{ color: "#4a4335" }}>{players.length} 人</span>
       </div>
+
+      {players.length === 0 ? (
+        <p className="px-6 py-8 text-center text-sm" style={{ color: "#2a4530" }}>尚無玩家</p>
+      ) : (
+        <div className="divide-y" style={{ borderColor: "#1a2e20" }}>
+          {players.map((p) => {
+            const isPositive = p.stats.totalAmount > 0;
+            const isNegative = p.stats.totalAmount < 0;
+            return (
+              <div key={p.id} className="px-6 py-4 flex items-center justify-between gap-4 transition-colors"
+                style={{ borderColor: "#1a2e20" }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = "#1a2e2050")}
+                onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
+                <Link href={`/players/${p.id}`} className="flex-1 min-w-0 group">
+                  <span className="font-medium group-hover:underline" style={{ color: "#f0ead8" }}>{p.name}</span>
+                </Link>
+                <span className="text-xs" style={{ color: "#4a4335" }}>{p.stats.sessionCount} 場</span>
+                <span className={`text-base font-bold w-24 text-right ${isPositive ? "glow-win" : isNegative ? "glow-loss" : ""}`}
+                  style={{
+                    fontFamily: "var(--font-playfair)",
+                    color: isPositive ? "#4ade80" : isNegative ? "#f87171" : "#4a4335",
+                  }}>
+                  {isPositive ? "+" : ""}{p.stats.totalAmount.toLocaleString()}
+                </span>
+                <button onClick={() => onDelete(p.id, p.name)}
+                  className="text-xs transition-colors px-2 py-1 rounded shrink-0"
+                  style={{ color: "#2a4530" }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "#f87171")}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = "#2a4530")}>
+                  刪除
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

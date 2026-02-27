@@ -1,20 +1,22 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Playfair_Display, Noto_Serif_TC } from "next/font/google";
 import { SessionProvider } from "next-auth/react";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const playfair = Playfair_Display({
+  variable: "--font-playfair",
   subsets: ["latin"],
+  weight: ["400", "600", "700"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const noto = Noto_Serif_TC({
+  variable: "--font-noto",
   subsets: ["latin"],
+  weight: ["400", "500", "700"],
 });
 
 export const metadata: Metadata = {
-  title: "麻將記錄系統",
+  title: "麻將記錄",
   description: "麻將輸贏計算與記錄",
 };
 
@@ -25,9 +27,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-TW">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${playfair.variable} ${noto.variable}`}>
         <SessionProvider>{children}</SessionProvider>
       </body>
     </html>

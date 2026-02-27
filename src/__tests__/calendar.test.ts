@@ -50,12 +50,20 @@ describe("calendar utilities", () => {
       const sessionMap = new Map([
         [
           "2026-02-15",
-          [{ id: "1", venue: "小明家", stakes: "100/台", playerCount: 4, players: [] }],
+          [
+            {
+              id: "1",
+              venue: "小明家",
+              stakes: "100/台",
+              playerCount: 4,
+              players: [] as import("@/lib/calendar").SessionPlayer[],
+            },
+          ],
         ],
       ]);
       const days = buildCalendarDays(2026, 1, sessionMap);
       const day15 = days.find(
-        (d) => d.isCurrentMonth && d.date.getDate() === 15
+        (d) => d.isCurrentMonth && d.date.getDate() === 15,
       );
       expect(day15?.sessions).toHaveLength(1);
       expect(day15?.sessions[0].venue).toBe("小明家");
@@ -70,9 +78,33 @@ describe("calendar utilities", () => {
 
   describe("groupSessionsByDate", () => {
     const makeSessions = () => [
-      { id: "1", date: "2026-02-15T10:00:00Z", venue: "小明家", stakes: "100/台", playerCount: 4, players: [{ name: "小明", amount: 500 }, { name: "小花", amount: -500 }] },
-      { id: "2", date: "2026-02-15T18:00:00Z", venue: "小花家", stakes: "50/台", playerCount: 3, players: [] },
-      { id: "3", date: "2026-02-20T10:00:00Z", venue: "小強家", stakes: "200/台", playerCount: 4, players: [] },
+      {
+        id: "1",
+        date: "2026-02-15T10:00:00Z",
+        venue: "小明家",
+        stakes: "100/台",
+        playerCount: 4,
+        players: [
+          { id: "p1", name: "小明", amount: 500 },
+          { id: "p2", name: "小花", amount: -500 },
+        ],
+      },
+      {
+        id: "2",
+        date: "2026-02-15T18:00:00Z",
+        venue: "小花家",
+        stakes: "50/台",
+        playerCount: 3,
+        players: [],
+      },
+      {
+        id: "3",
+        date: "2026-02-20T10:00:00Z",
+        venue: "小強家",
+        stakes: "200/台",
+        playerCount: 4,
+        players: [],
+      },
     ];
 
     it("should group sessions by date key", () => {

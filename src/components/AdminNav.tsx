@@ -9,46 +9,66 @@ interface Props {
 }
 
 const navItems = [
-  { href: "/admin", label: "總覽" },
-  { href: "/calendar", label: "行事曆" },
-  { href: "/admin/sessions", label: "牌局記錄" },
-  { href: "/admin/players", label: "玩家管理" },
+  { href: "/admin", label: "總覽", exact: true },
+  { href: "/calendar", label: "行事曆", exact: false },
+  { href: "/admin/sessions", label: "牌局", exact: false },
+  { href: "/admin/players", label: "玩家", exact: false },
 ];
 
 export default function AdminNav({ user }: Props) {
   const pathname = usePathname();
 
   return (
-    <nav className="bg-white border-b border-gray-200">
+    <nav
+      className="sticky top-0 z-20 border-b"
+      style={{
+        background: "#0b1a10cc",
+        borderColor: "#2a4530",
+        backdropFilter: "blur(12px)",
+      }}
+    >
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          <div className="flex items-center gap-6">
-            <span className="font-bold text-green-700 text-lg">
-              🀄 麻將記錄
+          <Link href="/admin" className="flex items-center gap-2">
+            <span className="text-xl">🀄</span>
+            <span
+              className="font-bold"
+              style={{ fontFamily: "var(--font-playfair)", color: "#c9a84c" }}
+            >
+              麻將記錄
             </span>
-            <div className="flex gap-1">
-              {navItems.map((item) => (
+          </Link>
+
+          <div className="flex items-center gap-1">
+            {navItems.map((item) => {
+              const isActive = item.exact
+                ? pathname === item.href
+                : pathname.startsWith(item.href);
+              return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    pathname === item.href
-                      ? "bg-green-100 text-green-700"
-                      : "text-gray-600 hover:bg-gray-100"
-                  }`}
+                  className="px-4 py-1.5 rounded-lg text-sm transition-all"
+                  style={{
+                    background: isActive ? "#c9a84c20" : "transparent",
+                    color: isActive ? "#c9a84c" : "#a89b7e",
+                    border: isActive ? "1px solid #c9a84c40" : "1px solid transparent",
+                    fontWeight: isActive ? "600" : "400",
+                  }}
                 >
                   {item.label}
                 </Link>
-              ))}
-            </div>
+              );
+            })}
           </div>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-gray-500">
+
+          <div className="flex items-center gap-3">
+            <span className="text-xs hidden sm:block" style={{ color: "#4a4335" }}>
               {user?.name ?? user?.email}
             </span>
             <button
               onClick={() => signOut({ callbackUrl: "/login" })}
-              className="text-sm text-gray-500 hover:text-red-500 transition-colors"
+              className="btn-ghost text-xs px-3 py-1.5"
             >
               登出
             </button>
