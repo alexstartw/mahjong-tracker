@@ -51,7 +51,8 @@ async function getStats() {
       id: s.id,
       date: s.date.toISOString(),
       venue: s.venue,
-      stakes: s.stakes,
+      base: s.base,
+      unit: s.unit,
       players: s.players
         .map((sp) => ({
           id: sp.playerId,
@@ -228,15 +229,22 @@ export default async function AdminPage() {
                       >
                         {s.venue}
                       </span>
-                      <span
-                        className="text-xs px-1.5 py-0.5 rounded"
-                        style={{
-                          background: "var(--muted)",
-                          color: "var(--muted-foreground)",
-                        }}
-                      >
-                        {s.stakes}
-                      </span>
+                      {(s.base != null || s.unit != null) && (
+                        <span
+                          className="text-xs px-1.5 py-0.5 rounded"
+                          style={{
+                            background: "var(--muted)",
+                            color: "var(--muted-foreground)",
+                          }}
+                        >
+                          {[
+                            s.base != null && `底 ${s.base}`,
+                            s.unit != null && `台 ${s.unit}`,
+                          ]
+                            .filter(Boolean)
+                            .join(" / ")}
+                        </span>
+                      )}
                     </div>
                     <div className="flex flex-wrap gap-x-4 gap-y-1">
                       {winners.map((p) => (

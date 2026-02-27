@@ -49,7 +49,9 @@ function EditPlayerModal({
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
       style={{ background: "rgba(0,0,0,0.5)" }}
-      onMouseDown={(e) => { if (e.target === e.currentTarget) onClose(); }}
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
     >
       <div
         className="w-full max-w-sm rounded-xl overflow-hidden"
@@ -60,7 +62,10 @@ function EditPlayerModal({
           className="flex items-center justify-between px-5 py-4"
           style={{ borderBottom: "1px solid var(--border)" }}
         >
-          <p className="text-sm font-semibold" style={{ color: "var(--foreground)" }}>
+          <p
+            className="text-sm font-semibold"
+            style={{ color: "var(--foreground)" }}
+          >
             編輯玩家
           </p>
           <button
@@ -74,7 +79,12 @@ function EditPlayerModal({
 
         <form onSubmit={handleSubmit} className="p-5 space-y-4">
           <div className="space-y-1.5">
-            <label className="text-xs" style={{ color: "var(--muted-foreground)" }}>名稱</label>
+            <label
+              className="text-xs"
+              style={{ color: "var(--muted-foreground)" }}
+            >
+              名稱
+            </label>
             <input
               type="text"
               value={name}
@@ -104,7 +114,10 @@ function EditPlayerModal({
                 }}
               />
             </button>
-            <span className="text-sm" style={{ color: "var(--muted-foreground)" }}>
+            <span
+              className="text-sm"
+              style={{ color: "var(--muted-foreground)" }}
+            >
               臨時玩家
             </span>
           </label>
@@ -112,18 +125,36 @@ function EditPlayerModal({
           {error && (
             <p
               className="text-xs px-3 py-1.5 rounded"
-              style={{ color: "var(--destructive)", background: "color-mix(in srgb, var(--destructive) 10%, transparent)" }}
+              style={{
+                color: "var(--destructive)",
+                background:
+                  "color-mix(in srgb, var(--destructive) 10%, transparent)",
+              }}
             >
               {error}
             </p>
           )}
 
           <div className="flex gap-2">
-            <button type="button" onClick={onClose} className="btn-ghost flex-1 py-2 text-sm">
+            <button
+              type="button"
+              onClick={onClose}
+              className="btn-ghost flex-1 py-2 text-sm"
+            >
               取消
             </button>
-            <button type="submit" disabled={loading} className="btn-primary flex-1 py-2 text-sm">
-              {loading ? <><Loader2 size={13} className="animate-spin" /> 儲存中…</> : "儲存"}
+            <button
+              type="submit"
+              disabled={loading}
+              className="btn-primary flex-1 py-2 text-sm"
+            >
+              {loading ? (
+                <>
+                  <Loader2 size={13} className="animate-spin" /> 儲存中…
+                </>
+              ) : (
+                "儲存"
+              )}
             </button>
           </div>
         </form>
@@ -180,10 +211,16 @@ export default function PlayersClient({
       <div className="space-y-6 max-w-2xl">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-semibold tracking-tight" style={{ color: "var(--foreground)" }}>
+          <h1
+            className="text-2xl font-semibold tracking-tight"
+            style={{ color: "var(--foreground)" }}
+          >
             玩家管理
           </h1>
-          <span className="text-sm" style={{ color: "var(--muted-foreground)" }}>
+          <span
+            className="text-sm"
+            style={{ color: "var(--muted-foreground)" }}
+          >
             {initialPlayers.length} 位
           </span>
         </div>
@@ -227,19 +264,30 @@ export default function PlayersClient({
                     }}
                   />
                 </button>
-                <span className="text-sm" style={{ color: "var(--muted-foreground)" }}>
+                <span
+                  className="text-sm"
+                  style={{ color: "var(--muted-foreground)" }}
+                >
                   臨時
                 </span>
               </label>
 
-              <button type="submit" disabled={loading} className="btn-primary shrink-0">
+              <button
+                type="submit"
+                disabled={loading}
+                className="btn-primary shrink-0"
+              >
                 <Plus size={14} /> {loading ? "…" : "新增"}
               </button>
             </form>
             {error && (
               <p
                 className="text-xs mt-3 px-3 py-1.5 rounded"
-                style={{ color: "var(--destructive)", background: "color-mix(in srgb, var(--destructive) 10%, transparent)" }}
+                style={{
+                  color: "var(--destructive)",
+                  background:
+                    "color-mix(in srgb, var(--destructive) 10%, transparent)",
+                }}
               >
                 {error}
               </p>
@@ -297,7 +345,10 @@ function PlayerTable({
         className="flex items-center justify-between px-5 py-3.5"
         style={{ borderBottom: "1px solid var(--border)" }}
       >
-        <p className="text-sm font-medium" style={{ color: "var(--foreground)" }}>
+        <p
+          className="text-sm font-medium"
+          style={{ color: "var(--foreground)" }}
+        >
           {title}
         </p>
         <span className="text-xs" style={{ color: "var(--muted-foreground)" }}>
@@ -306,7 +357,10 @@ function PlayerTable({
       </div>
 
       {players.length === 0 ? (
-        <p className="px-5 py-8 text-sm text-center" style={{ color: "var(--muted-foreground)" }}>
+        <p
+          className="px-5 py-8 text-sm text-center"
+          style={{ color: "var(--muted-foreground)" }}
+        >
           尚無玩家
         </p>
       ) : (
@@ -318,27 +372,44 @@ function PlayerTable({
               <div
                 key={p.id}
                 className="flex items-center gap-4 px-5 py-3 group transition-colors"
-                style={{ borderBottom: i < players.length - 1 ? "1px solid var(--border)" : "none" }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = "var(--muted)")}
-                onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                style={{
+                  borderBottom:
+                    i < players.length - 1 ? "1px solid var(--border)" : "none",
+                }}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.background = "var(--muted)")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.background = "transparent")
+                }
               >
                 <Link
                   href={`/players/${p.id}`}
                   className="flex-1 min-w-0 hover:opacity-70 transition-opacity"
                 >
-                  <span className="text-sm font-medium" style={{ color: "var(--foreground)" }}>
+                  <span
+                    className="text-sm font-medium"
+                    style={{ color: "var(--foreground)" }}
+                  >
                     {p.name}
                   </span>
                 </Link>
 
-                <span className="text-xs shrink-0 tabular" style={{ color: "var(--muted-foreground)" }}>
+                <span
+                  className="text-xs shrink-0 tabular"
+                  style={{ color: "var(--muted-foreground)" }}
+                >
                   {p.stats.sessionCount} 場
                 </span>
 
                 <span
                   className="text-sm font-semibold w-20 text-right shrink-0 tabular"
                   style={{
-                    color: isPos ? "var(--win)" : isNeg ? "var(--loss)" : "var(--muted-foreground)",
+                    color: isPos
+                      ? "var(--win)"
+                      : isNeg
+                        ? "var(--loss)"
+                        : "var(--muted-foreground)",
                   }}
                 >
                   {isPos ? "+" : ""}
@@ -346,19 +417,25 @@ function PlayerTable({
                 </span>
 
                 {isLoggedIn && (
-                  <div className="shrink-0 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="shrink-0 flex gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                     <button
                       onClick={() => onEdit(p)}
                       className="p-1.5 rounded transition-colors"
                       style={{ color: "var(--muted-foreground)" }}
                       onMouseEnter={(e) => {
-                        (e.currentTarget as HTMLButtonElement).style.color = "var(--primary)";
-                        (e.currentTarget as HTMLButtonElement).style.background =
+                        (e.currentTarget as HTMLButtonElement).style.color =
+                          "var(--primary)";
+                        (
+                          e.currentTarget as HTMLButtonElement
+                        ).style.background =
                           "color-mix(in srgb, var(--primary) 10%, transparent)";
                       }}
                       onMouseLeave={(e) => {
-                        (e.currentTarget as HTMLButtonElement).style.color = "var(--muted-foreground)";
-                        (e.currentTarget as HTMLButtonElement).style.background = "transparent";
+                        (e.currentTarget as HTMLButtonElement).style.color =
+                          "var(--muted-foreground)";
+                        (
+                          e.currentTarget as HTMLButtonElement
+                        ).style.background = "transparent";
                       }}
                     >
                       <Pencil size={13} />
@@ -368,13 +445,19 @@ function PlayerTable({
                       className="shrink-0 p-1.5 rounded transition-colors"
                       style={{ color: "var(--muted-foreground)" }}
                       onMouseEnter={(e) => {
-                        (e.currentTarget as HTMLButtonElement).style.color = "var(--destructive)";
-                        (e.currentTarget as HTMLButtonElement).style.background =
+                        (e.currentTarget as HTMLButtonElement).style.color =
+                          "var(--destructive)";
+                        (
+                          e.currentTarget as HTMLButtonElement
+                        ).style.background =
                           "color-mix(in srgb, var(--destructive) 10%, transparent)";
                       }}
                       onMouseLeave={(e) => {
-                        (e.currentTarget as HTMLButtonElement).style.color = "var(--muted-foreground)";
-                        (e.currentTarget as HTMLButtonElement).style.background = "transparent";
+                        (e.currentTarget as HTMLButtonElement).style.color =
+                          "var(--muted-foreground)";
+                        (
+                          e.currentTarget as HTMLButtonElement
+                        ).style.background = "transparent";
                       }}
                     >
                       <Trash2 size={13} />

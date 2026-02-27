@@ -45,7 +45,8 @@ async function getPlayerProfile(id: string) {
       id: sp.session.id,
       date: sp.session.date.toISOString(),
       venue: sp.session.venue,
-      stakes: sp.session.stakes,
+      base: sp.session.base,
+      unit: sp.session.unit,
       amount: sp.amount,
     })),
   };
@@ -287,12 +288,19 @@ export default async function PlayerProfilePage({ params }: Props) {
                         >
                           {s.venue}
                         </p>
-                        <p
-                          className="text-xs mt-0.5"
-                          style={{ color: "var(--muted-foreground)" }}
-                        >
-                          {s.stakes}
-                        </p>
+                        {(s.base != null || s.unit != null) && (
+                          <p
+                            className="text-xs mt-0.5"
+                            style={{ color: "var(--muted-foreground)" }}
+                          >
+                            {[
+                              s.base != null && `底 ${s.base}`,
+                              s.unit != null && `台 ${s.unit}`,
+                            ]
+                              .filter(Boolean)
+                              .join(" / ")}
+                          </p>
+                        )}
                       </div>
                     </div>
                     <p

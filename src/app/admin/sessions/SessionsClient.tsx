@@ -28,7 +28,13 @@ interface AllPlayer {
   isGuest: boolean;
 }
 
-function StakesBadge({ base, unit }: { base: number | null; unit: number | null }) {
+function StakesBadge({
+  base,
+  unit,
+}: {
+  base: number | null;
+  unit: number | null;
+}) {
   if (base == null && unit == null) return null;
   const parts: string[] = [];
   if (base != null) parts.push(`底 ${base}`);
@@ -61,15 +67,19 @@ function EditSessionModal({
   const router = useRouter();
   const [venue, setVenue] = useState(session.venue);
   const [date, setDate] = useState(session.date.slice(0, 10));
-  const [base, setBase] = useState(session.base != null ? String(session.base) : "");
-  const [unit, setUnit] = useState(session.unit != null ? String(session.unit) : "");
+  const [base, setBase] = useState(
+    session.base != null ? String(session.base) : "",
+  );
+  const [unit, setUnit] = useState(
+    session.unit != null ? String(session.unit) : "",
+  );
   const [note, setNote] = useState(session.note ?? "");
   const [rows, setRows] = useState<EditRow[]>(
     session.players.map((p) => ({
       playerId: p.playerId,
       name: p.name,
       amount: String(p.amount),
-    }))
+    })),
   );
   const [addPlayerId, setAddPlayerId] = useState("");
   const [error, setError] = useState("");
@@ -82,12 +92,12 @@ function EditSessionModal({
   const isBalanced = rows.length >= 2 && total === 0;
 
   const availablePlayers = allPlayers.filter(
-    (p) => !rows.some((r) => r.playerId === p.id)
+    (p) => !rows.some((r) => r.playerId === p.id),
   );
 
   function updateAmount(playerId: string, val: string) {
     setRows((prev) =>
-      prev.map((r) => (r.playerId === playerId ? { ...r, amount: val } : r))
+      prev.map((r) => (r.playerId === playerId ? { ...r, amount: val } : r)),
     );
   }
 
@@ -105,7 +115,10 @@ function EditSessionModal({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
-    if (rows.length < 2) { setError("至少需要 2 位玩家"); return; }
+    if (rows.length < 2) {
+      setError("至少需要 2 位玩家");
+      return;
+    }
     for (const r of rows) {
       if (!r.amount || isNaN(parseInt(r.amount, 10))) {
         setError(`請輸入 ${r.name} 的金額`);
@@ -146,7 +159,9 @@ function EditSessionModal({
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
       style={{ background: "rgba(0,0,0,0.5)" }}
-      onMouseDown={(e) => { if (e.target === e.currentTarget) onClose(); }}
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
     >
       <div
         className="w-full max-w-md rounded-xl overflow-hidden"
@@ -157,7 +172,10 @@ function EditSessionModal({
           className="flex items-center justify-between px-5 py-4"
           style={{ borderBottom: "1px solid var(--border)" }}
         >
-          <p className="text-sm font-semibold" style={{ color: "var(--foreground)" }}>
+          <p
+            className="text-sm font-semibold"
+            style={{ color: "var(--foreground)" }}
+          >
             編輯牌局
           </p>
           <button
@@ -169,11 +187,19 @@ function EditSessionModal({
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-5 space-y-4 max-h-[80vh] overflow-y-auto">
+        <form
+          onSubmit={handleSubmit}
+          className="p-5 space-y-4 max-h-[80vh] overflow-y-auto"
+        >
           {/* Date + Venue */}
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <label className="text-xs" style={{ color: "var(--muted-foreground)" }}>日期</label>
+              <label
+                className="text-xs"
+                style={{ color: "var(--muted-foreground)" }}
+              >
+                日期
+              </label>
               <input
                 type="date"
                 value={date}
@@ -183,7 +209,12 @@ function EditSessionModal({
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs" style={{ color: "var(--muted-foreground)" }}>地點</label>
+              <label
+                className="text-xs"
+                style={{ color: "var(--muted-foreground)" }}
+              >
+                地點
+              </label>
               <input
                 type="text"
                 value={venue}
@@ -197,7 +228,12 @@ function EditSessionModal({
           {/* Base + Unit */}
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <label className="text-xs" style={{ color: "var(--muted-foreground)" }}>底（選填）</label>
+              <label
+                className="text-xs"
+                style={{ color: "var(--muted-foreground)" }}
+              >
+                底（選填）
+              </label>
               <input
                 type="number"
                 value={base}
@@ -208,7 +244,12 @@ function EditSessionModal({
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs" style={{ color: "var(--muted-foreground)" }}>台（選填）</label>
+              <label
+                className="text-xs"
+                style={{ color: "var(--muted-foreground)" }}
+              >
+                台（選填）
+              </label>
               <input
                 type="number"
                 value={unit}
@@ -222,7 +263,12 @@ function EditSessionModal({
 
           {/* Note */}
           <div className="space-y-1.5">
-            <label className="text-xs" style={{ color: "var(--muted-foreground)" }}>備註（選填）</label>
+            <label
+              className="text-xs"
+              style={{ color: "var(--muted-foreground)" }}
+            >
+              備註（選填）
+            </label>
             <input
               type="text"
               value={note}
@@ -235,28 +281,42 @@ function EditSessionModal({
           {/* Players */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <label className="text-xs" style={{ color: "var(--muted-foreground)" }}>
+              <label
+                className="text-xs"
+                style={{ color: "var(--muted-foreground)" }}
+              >
                 玩家金額
               </label>
               <span
                 className="text-xs font-medium px-2 py-0.5 rounded"
                 style={{
-                  color: isBalanced ? "var(--win)" : total !== 0 ? "var(--loss)" : "var(--muted-foreground)",
+                  color: isBalanced
+                    ? "var(--win)"
+                    : total !== 0
+                      ? "var(--loss)"
+                      : "var(--muted-foreground)",
                   background: isBalanced
                     ? "color-mix(in srgb, var(--win) 10%, transparent)"
                     : total !== 0
-                    ? "color-mix(in srgb, var(--loss) 10%, transparent)"
-                    : "var(--muted)",
+                      ? "color-mix(in srgb, var(--loss) 10%, transparent)"
+                      : "var(--muted)",
                 }}
               >
-                {isBalanced ? "✓ 平衡" : total === 0 ? "輸入金額" : `總和 ${total > 0 ? "+" : ""}${total}`}
+                {isBalanced
+                  ? "✓ 平衡"
+                  : total === 0
+                    ? "輸入金額"
+                    : `總和 ${total > 0 ? "+" : ""}${total}`}
               </span>
             </div>
 
             <div className="space-y-2">
               {rows.map((r) => (
                 <div key={r.playerId} className="flex items-center gap-2">
-                  <span className="w-16 text-sm shrink-0 truncate" style={{ color: "var(--foreground)" }}>
+                  <span
+                    className="w-16 text-sm shrink-0 truncate"
+                    style={{ color: "var(--foreground)" }}
+                  >
                     {r.name}
                   </span>
                   <input
@@ -291,7 +351,8 @@ function EditSessionModal({
                   <option value="">新增玩家…</option>
                   {availablePlayers.map((p) => (
                     <option key={p.id} value={p.id}>
-                      {p.name}{p.isGuest ? " (臨時)" : ""}
+                      {p.name}
+                      {p.isGuest ? " (臨時)" : ""}
                     </option>
                   ))}
                 </select>
@@ -311,18 +372,36 @@ function EditSessionModal({
           {error && (
             <p
               className="text-xs px-3 py-2 rounded"
-              style={{ color: "var(--destructive)", background: "color-mix(in srgb, var(--destructive) 10%, transparent)" }}
+              style={{
+                color: "var(--destructive)",
+                background:
+                  "color-mix(in srgb, var(--destructive) 10%, transparent)",
+              }}
             >
               {error}
             </p>
           )}
 
           <div className="flex gap-2 pt-1">
-            <button type="button" onClick={onClose} className="btn-ghost flex-1 py-2 text-sm">
+            <button
+              type="button"
+              onClick={onClose}
+              className="btn-ghost flex-1 py-2 text-sm"
+            >
               取消
             </button>
-            <button type="submit" disabled={loading} className="btn-primary flex-1 py-2 text-sm">
-              {loading ? <><Loader2 size={13} className="animate-spin" /> 儲存中…</> : "儲存"}
+            <button
+              type="submit"
+              disabled={loading}
+              className="btn-primary flex-1 py-2 text-sm"
+            >
+              {loading ? (
+                <>
+                  <Loader2 size={13} className="animate-spin" /> 儲存中…
+                </>
+              ) : (
+                "儲存"
+              )}
             </button>
           </div>
         </form>
@@ -353,7 +432,10 @@ export default function SessionsClient({
     return (
       <div className="card p-16 text-center">
         <p className="text-4xl mb-3">🀄</p>
-        <p className="text-sm mb-5" style={{ color: "var(--muted-foreground)" }}>
+        <p
+          className="text-sm mb-5"
+          style={{ color: "var(--muted-foreground)" }}
+        >
           尚無牌局記錄
         </p>
         {isLoggedIn && (
@@ -382,7 +464,9 @@ export default function SessionsClient({
             <div
               key={session.id}
               className="flex items-start gap-5 px-5 py-4 group transition-colors"
-              style={{ borderBottom: isLast ? "none" : "1px solid var(--border)" }}
+              style={{
+                borderBottom: isLast ? "none" : "1px solid var(--border)",
+              }}
               onMouseEnter={(e) =>
                 (e.currentTarget.style.background = "var(--muted)")
               }
@@ -402,19 +486,28 @@ export default function SessionsClient({
                   className="text-[11px] mt-0.5"
                   style={{ color: "var(--muted-foreground)" }}
                 >
-                  {date.toLocaleDateString("zh-TW", { month: "short", timeZone: "UTC" })}
+                  {date.toLocaleDateString("zh-TW", {
+                    month: "short",
+                    timeZone: "UTC",
+                  })}
                 </p>
               </div>
 
               {/* Info */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-2.5">
-                  <span className="text-sm font-medium" style={{ color: "var(--foreground)" }}>
+                  <span
+                    className="text-sm font-medium"
+                    style={{ color: "var(--foreground)" }}
+                  >
                     {session.venue}
                   </span>
                   <StakesBadge base={session.base} unit={session.unit} />
                   {session.note && (
-                    <span className="text-xs" style={{ color: "var(--muted-foreground)" }}>
+                    <span
+                      className="text-xs"
+                      style={{ color: "var(--muted-foreground)" }}
+                    >
                       {session.note}
                     </span>
                   )}
@@ -434,7 +527,12 @@ export default function SessionsClient({
                     </p>
                     <div className="space-y-1">
                       {winners.length === 0 ? (
-                        <span className="text-xs" style={{ color: "var(--muted-foreground)" }}>—</span>
+                        <span
+                          className="text-xs"
+                          style={{ color: "var(--muted-foreground)" }}
+                        >
+                          —
+                        </span>
                       ) : (
                         winners.map((p) => (
                           <Link
@@ -442,10 +540,16 @@ export default function SessionsClient({
                             href={`/players/${p.playerId}`}
                             className="flex items-center justify-between group/row hover:opacity-70 transition-opacity"
                           >
-                            <span className="text-xs group-hover/row:underline" style={{ color: "var(--muted-foreground)" }}>
+                            <span
+                              className="text-xs group-hover/row:underline"
+                              style={{ color: "var(--muted-foreground)" }}
+                            >
                               {p.name}
                             </span>
-                            <span className="text-xs font-semibold tabular" style={{ color: "var(--win)" }}>
+                            <span
+                              className="text-xs font-semibold tabular"
+                              style={{ color: "var(--win)" }}
+                            >
                               +{p.amount.toLocaleString()}
                             </span>
                           </Link>
@@ -463,7 +567,12 @@ export default function SessionsClient({
                     </p>
                     <div className="space-y-1">
                       {losers.length === 0 ? (
-                        <span className="text-xs" style={{ color: "var(--muted-foreground)" }}>—</span>
+                        <span
+                          className="text-xs"
+                          style={{ color: "var(--muted-foreground)" }}
+                        >
+                          —
+                        </span>
                       ) : (
                         losers.map((p) => (
                           <Link
@@ -471,10 +580,16 @@ export default function SessionsClient({
                             href={`/players/${p.playerId}`}
                             className="flex items-center justify-between group/row hover:opacity-70 transition-opacity"
                           >
-                            <span className="text-xs group-hover/row:underline" style={{ color: "var(--muted-foreground)" }}>
+                            <span
+                              className="text-xs group-hover/row:underline"
+                              style={{ color: "var(--muted-foreground)" }}
+                            >
                               {p.name}
                             </span>
-                            <span className="text-xs font-semibold tabular" style={{ color: "var(--loss)" }}>
+                            <span
+                              className="text-xs font-semibold tabular"
+                              style={{ color: "var(--loss)" }}
+                            >
                               {p.amount.toLocaleString()}
                             </span>
                           </Link>
@@ -487,19 +602,22 @@ export default function SessionsClient({
 
               {/* Actions */}
               {isLoggedIn && (
-                <div className="shrink-0 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="shrink-0 flex gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                   <button
                     onClick={() => setEditingSession(session)}
                     className="p-1.5 rounded transition-colors"
                     style={{ color: "var(--muted-foreground)" }}
                     onMouseEnter={(e) => {
-                      (e.currentTarget as HTMLButtonElement).style.color = "var(--primary)";
+                      (e.currentTarget as HTMLButtonElement).style.color =
+                        "var(--primary)";
                       (e.currentTarget as HTMLButtonElement).style.background =
                         "color-mix(in srgb, var(--primary) 10%, transparent)";
                     }}
                     onMouseLeave={(e) => {
-                      (e.currentTarget as HTMLButtonElement).style.color = "var(--muted-foreground)";
-                      (e.currentTarget as HTMLButtonElement).style.background = "transparent";
+                      (e.currentTarget as HTMLButtonElement).style.color =
+                        "var(--muted-foreground)";
+                      (e.currentTarget as HTMLButtonElement).style.background =
+                        "transparent";
                     }}
                   >
                     <Pencil size={14} />
@@ -509,13 +627,16 @@ export default function SessionsClient({
                     className="p-1.5 rounded transition-colors"
                     style={{ color: "var(--muted-foreground)" }}
                     onMouseEnter={(e) => {
-                      (e.currentTarget as HTMLButtonElement).style.color = "var(--destructive)";
+                      (e.currentTarget as HTMLButtonElement).style.color =
+                        "var(--destructive)";
                       (e.currentTarget as HTMLButtonElement).style.background =
                         "color-mix(in srgb, var(--destructive) 10%, transparent)";
                     }}
                     onMouseLeave={(e) => {
-                      (e.currentTarget as HTMLButtonElement).style.color = "var(--muted-foreground)";
-                      (e.currentTarget as HTMLButtonElement).style.background = "transparent";
+                      (e.currentTarget as HTMLButtonElement).style.color =
+                        "var(--muted-foreground)";
+                      (e.currentTarget as HTMLButtonElement).style.background =
+                        "transparent";
                     }}
                   >
                     <Trash2 size={14} />
