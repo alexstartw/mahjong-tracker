@@ -19,7 +19,7 @@ const navItems = [
   { href: "/admin/players",  label: "玩家",  Icon: Users,           exact: false },
 ];
 
-/** CSS-based text reveal — avoids framer-motion `display` animation bug with React 19 */
+/** Pure-CSS text reveal — no framer-motion, no React 19 context issues */
 function RevealText({
   children,
   className,
@@ -33,12 +33,11 @@ function RevealText({
   const visible = !animate || open;
   return (
     <span
-      className={cn("overflow-hidden whitespace-nowrap", className)}
+      className={cn("whitespace-nowrap overflow-hidden inline-block", className)}
       style={{
         maxWidth:   visible ? "180px" : "0px",
         opacity:    visible ? 1 : 0,
         transition: "max-width 0.2s ease, opacity 0.15s ease",
-        display: "inline-block",
         ...style,
       }}
     >
@@ -52,17 +51,14 @@ function SidebarContent({ user }: Props) {
 
   return (
     <SidebarBody
-      className="justify-between border-r"
+      className="justify-between border-r px-3 py-4"
       style={{ background: "var(--sidebar)", borderColor: "var(--sidebar-border)" }}
     >
-      {/* Top: logo + nav */}
-      <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden gap-0">
-        <Link href="/admin" className="flex items-center gap-2.5 px-2 py-3 mb-2">
+      {/* Top */}
+      <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
+        <Link href="/admin" className="flex items-center gap-2.5 px-1 py-2 mb-3">
           <span className="text-xl leading-none flex-shrink-0">🀄</span>
-          <RevealText
-            className="text-sm font-semibold tracking-tight"
-            style={{ color: "var(--foreground)" }}
-          >
+          <RevealText className="text-sm font-semibold tracking-tight" style={{ color: "var(--foreground)" }}>
             麻將記錄
           </RevealText>
         </Link>
@@ -75,10 +71,7 @@ function SidebarContent({ user }: Props) {
                 key={href}
                 href={href}
                 className={cn(
-                  "flex items-center gap-3 px-2 py-2 rounded-md transition-colors text-sm",
-                  isActive
-                    ? ""
-                    : "hover:bg-[var(--sidebar-accent)]"
+                  "flex items-center gap-3 px-2 py-2 rounded-md transition-colors text-sm group/link"
                 )}
                 style={{
                   background: isActive
@@ -87,10 +80,16 @@ function SidebarContent({ user }: Props) {
                   color: isActive ? "var(--primary)" : "var(--sidebar-foreground)",
                 }}
                 onMouseEnter={(e) => {
-                  if (!isActive) (e.currentTarget as HTMLAnchorElement).style.color = "var(--foreground)";
+                  if (!isActive) {
+                    (e.currentTarget as HTMLAnchorElement).style.background = "var(--sidebar-accent)";
+                    (e.currentTarget as HTMLAnchorElement).style.color = "var(--foreground)";
+                  }
                 }}
                 onMouseLeave={(e) => {
-                  if (!isActive) (e.currentTarget as HTMLAnchorElement).style.color = "var(--sidebar-foreground)";
+                  if (!isActive) {
+                    (e.currentTarget as HTMLAnchorElement).style.background = "";
+                    (e.currentTarget as HTMLAnchorElement).style.color = "var(--sidebar-foreground)";
+                  }
                 }}
               >
                 <Icon size={16} className="flex-shrink-0" />
@@ -103,9 +102,9 @@ function SidebarContent({ user }: Props) {
         </nav>
       </div>
 
-      {/* Bottom: user + logout */}
+      {/* Bottom */}
       <div className="flex flex-col gap-0.5">
-        <div className="h-px mx-2 mb-2" style={{ background: "var(--sidebar-border)" }} />
+        <div className="h-px mb-2" style={{ background: "var(--sidebar-border)" }} />
 
         {user && (
           <div className="flex items-center gap-2.5 px-2 py-2 overflow-hidden">
@@ -135,7 +134,7 @@ function SidebarContent({ user }: Props) {
           }}
           onMouseLeave={(e) => {
             (e.currentTarget as HTMLButtonElement).style.color = "var(--sidebar-foreground)";
-            (e.currentTarget as HTMLButtonElement).style.background = "transparent";
+            (e.currentTarget as HTMLButtonElement).style.background = "";
           }}
         >
           <LogOut size={16} className="flex-shrink-0" />

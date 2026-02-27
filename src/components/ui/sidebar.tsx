@@ -3,7 +3,6 @@
 import { cn } from "@/lib/utils";
 import Link, { LinkProps } from "next/link";
 import React, { useState, createContext, useContext } from "react";
-import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 
 interface Links {
@@ -63,48 +62,65 @@ export const Sidebar = ({
   </SidebarProvider>
 );
 
-export const SidebarBody = (props: React.ComponentProps<typeof motion.div>) => (
+export const SidebarBody = ({
+  className,
+  style,
+  children,
+}: {
+  className?: string;
+  style?: React.CSSProperties;
+  children: React.ReactNode;
+}) => (
   <>
-    <DesktopSidebar {...props} />
-    <MobileSidebar {...(props as React.ComponentProps<"div">)} />
+    <DesktopSidebar className={className} style={style}>{children}</DesktopSidebar>
+    <MobileSidebar  className={className} style={style}>{children}</MobileSidebar>
   </>
 );
 
+/** Desktop: pure-CSS width transition, no framer-motion */
 export const DesktopSidebar = ({
   className,
+  style,
   children,
-  ...props
-}: React.ComponentProps<typeof motion.div>) => {
+}: {
+  className?: string;
+  style?: React.CSSProperties;
+  children: React.ReactNode;
+}) => {
   const { open, setOpen, animate } = useSidebar();
   return (
-    <motion.div
-      className={cn(
-        "h-full px-3 py-4 hidden md:flex md:flex-col flex-shrink-0",
-        className
-      )}
-      animate={{ width: animate ? (open ? "220px" : "52px") : "220px" }}
-      transition={{ duration: 0.2, ease: "easeInOut" }}
+    <div
+      className={cn("h-full hidden md:flex md:flex-col flex-shrink-0 overflow-hidden", className)}
+      style={{
+        width: animate ? (open ? "220px" : "52px") : "220px",
+        transition: animate ? "width 0.2s ease" : undefined,
+        ...style,
+      }}
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}
-      {...props}
     >
       {children}
-    </motion.div>
+    </div>
   );
 };
 
+/** Mobile: CSS translateX transition, no framer-motion */
 export const MobileSidebar = ({
   className,
+  style,
   children,
-  ...props
-}: React.ComponentProps<"div">) => {
+}: {
+  className?: string;
+  style?: React.CSSProperties;
+  children: React.ReactNode;
+}) => {
   const { open, setOpen } = useSidebar();
   return (
     <>
+      {/* Mobile top bar */}
       <div
-        className="h-14 px-4 flex flex-row md:hidden items-center justify-between w-full border-b"
+        className="h-14 px-4 flex flex-row md:hidden items-center justify-between w-full border-b flex-shrink-0"
         style={{ background: "var(--sidebar)", borderColor: "var(--sidebar-border)" }}
-        {...props}
       >
         <span className="text-sm font-semibold" style={{ color: "var(--foreground)" }}>
           🀄 麻將記錄
@@ -118,36 +134,43 @@ export const MobileSidebar = ({
         </button>
       </div>
 
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ x: "-100%", opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: "-100%", opacity: 0 }}
-            transition={{ duration: 0.25, ease: "easeInOut" }}
-            className={cn(
-              "fixed inset-0 h-full w-full p-8 z-[100] flex flex-col justify-between md:hidden",
-              className
-            )}
-            style={{ background: "var(--sidebar)" }}
-          >
-            <button
-              className="absolute right-6 top-6"
-              style={{ color: "var(--sidebar-foreground)" }}
-              onClick={() => setOpen(false)}
-            >
-              <X size={18} />
-            </button>
-            {children}
-          </motion.div>
+      {/* Backdrop */}
+      <div
+        className="fixed inset-0 z-[99] md:hidden"
+        style={{
+          background: "rgba(0,0,0,0.5)",
+          opacity: open ? 1 : 0,
+          pointerEvents: open ? "auto" : "none",
+          transition: "opacity 0.25s ease",
+        }}
+        onClick={() => setOpen(false)}
+      />
+
+      {/* Slide-in panel */}
+      <div
+        className={cn(
+          "fixed inset-y-0 left-0 w-72 z-[100] p-8 flex flex-col justify-between md:hidden",
+          className
         )}
-      </AnimatePresence>
+        style={{
+          transform: open ? "translateX(0)" : "translateX(-100%)",
+          transition: "transform 0.25s ease",
+          ...style,
+        }}
+      >
+        <button
+          className="absolute right-5 top-5"
+          style={{ color: "var(--sidebar-foreground)" }}
+          onClick={() => setOpen(false)}
+        >
+          <X size={18} />
+        </button>
+        {children}
+      </div>
     </>
   );
 };
 
-/** Use CSS max-width/opacity transition — avoids the React 19 + framer-motion
- *  "cannot read 'contexts'" bug caused by animating `display` via motion.span */
 export const SidebarLink = ({
   link,
   className,
@@ -167,12 +190,13 @@ export const SidebarLink = ({
     >
       {link.icon}
       <span
-        className="text-sm whitespace-nowrap overflow-hidden group-hover/sidebar:translate-x-0.5 transition-all duration-150"
+        className="text-sm whitespace-nowrap overflow-hidden group-hover/sidebar:translate-x-0.5"
         style={{
-          maxWidth: visible ? "160px" : "0px",
-          opacity:  visible ? 1 : 0,
+          maxWidth:   visible ? "160px" : "0px",
+          opacity:    visible ? 1 : 0,
           transition: "max-width 0.2s ease, opacity 0.15s ease, transform 0.15s ease",
-          color: "var(--sidebar-foreground)",
+          display:    "inline-block",
+          color:      "var(--sidebar-foreground)",
         }}
       >
         {link.label}
