@@ -17,8 +17,6 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: latest
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -44,5 +42,6 @@ jobs:
         run: pnpm run test:ci
         env:
           DATABASE_URL: "file:./test.db"
+          TURSO_DATABASE_URL: "file:./test.db"
           NEXTAUTH_SECRET: "test-secret-for-ci"
           NEXTAUTH_URL: "http://localhost:3000"
