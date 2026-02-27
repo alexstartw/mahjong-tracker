@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import AdminNav from "@/components/AdminNav";
+import AdminSidebar from "@/components/AdminSidebar";
 
 export default async function AdminLayout({
   children,
@@ -11,9 +11,14 @@ export default async function AdminLayout({
   if (!session) redirect("/login");
 
   return (
-    <div className="min-h-screen" style={{ background: "var(--background)" }}>
-      <AdminNav user={session.user} />
-      <main className="max-w-6xl mx-auto px-4 py-8">{children}</main>
+    <div
+      className="flex h-screen overflow-hidden"
+      style={{ background: "var(--background)" }}
+    >
+      <AdminSidebar user={session.user} />
+      <main className="flex-1 overflow-y-auto">
+        <div className="max-w-5xl mx-auto px-6 py-8">{children}</div>
+      </main>
     </div>
   );
 }
