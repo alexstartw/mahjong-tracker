@@ -1,18 +1,12 @@
 import type { Metadata } from "next";
-import { Oxanium, Merriweather } from "next/font/google";
+import { DM_Sans } from "next/font/google";
 import { SessionProvider } from "next-auth/react";
 import "./globals.css";
 
-const oxanium = Oxanium({
+const dmSans = DM_Sans({
   variable: "--font-sans",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
-});
-
-const merriweather = Merriweather({
-  variable: "--font-serif",
-  subsets: ["latin"],
-  weight: ["400", "700"],
 });
 
 export const metadata: Metadata = {
@@ -27,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-TW">
-      <body className={`${oxanium.variable} ${merriweather.variable}`}>
+      <body className={dmSans.variable}>
         <SessionProvider>{children}</SessionProvider>
       </body>
     </html>

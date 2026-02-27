@@ -20,30 +20,10 @@ interface Props {
 }
 
 const navItems = [
-  {
-    href: "/admin",
-    label: "總覽",
-    icon: LayoutDashboard,
-    exact: true,
-  },
-  {
-    href: "/calendar",
-    label: "行事曆",
-    icon: CalendarDays,
-    exact: false,
-  },
-  {
-    href: "/admin/sessions",
-    label: "牌局",
-    icon: Layers,
-    exact: false,
-  },
-  {
-    href: "/admin/players",
-    label: "玩家",
-    icon: Users,
-    exact: false,
-  },
+  { href: "/admin", label: "總覽", Icon: LayoutDashboard, exact: true },
+  { href: "/calendar", label: "行事曆", Icon: CalendarDays, exact: false },
+  { href: "/admin/sessions", label: "牌局", Icon: Layers, exact: false },
+  { href: "/admin/players", label: "玩家", Icon: Users, exact: false },
 ];
 
 function SidebarContent({ user }: Props) {
@@ -52,103 +32,95 @@ function SidebarContent({ user }: Props) {
 
   return (
     <SidebarBody
-      className="justify-between gap-10 border-r"
+      className="justify-between border-r"
       style={{
         background: "var(--sidebar)",
         borderColor: "var(--sidebar-border)",
       }}
     >
-      <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
+      <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden gap-0">
         {/* Logo */}
-        <Link href="/admin" className="flex items-center gap-2 py-1 mb-2">
-          <span className="text-2xl flex-shrink-0">🀄</span>
+        <Link href="/admin" className="flex items-center gap-3 px-3 py-3 mb-2">
+          <span className="text-xl leading-none flex-shrink-0">🀄</span>
           <motion.span
             animate={{
-              display: animate ? (open ? "inline-block" : "none") : "inline-block",
+              display: animate ? (open ? "block" : "none") : "block",
               opacity: animate ? (open ? 1 : 0) : 1,
             }}
-            className="font-bold text-base whitespace-pre"
-            style={{ fontFamily: "var(--font-serif)", color: "var(--sidebar-primary)" }}
+            className="text-sm font-semibold whitespace-nowrap tracking-tight"
+            style={{ color: "var(--foreground)" }}
           >
             麻將記錄
           </motion.span>
         </Link>
 
-        {/* Nav links */}
-        <div className="mt-6 flex flex-col gap-1">
-          {navItems.map((item) => {
-            const isActive = item.exact
-              ? pathname === item.href
-              : pathname.startsWith(item.href);
-            const Icon = item.icon;
-
+        {/* Nav */}
+        <nav className="flex flex-col gap-0.5 px-2">
+          {navItems.map(({ href, label, Icon, exact }) => {
+            const isActive = exact
+              ? pathname === href
+              : pathname.startsWith(href);
             return (
               <Link
-                key={item.href}
-                href={item.href}
+                key={href}
+                href={href}
                 className={cn(
-                  "flex items-center gap-3 px-2 py-2.5 rounded-lg transition-all group/link",
+                  "flex items-center gap-3 px-2 py-2 rounded-md transition-colors text-sm",
+                  isActive
+                    ? "text-[var(--primary)]"
+                    : "text-[var(--sidebar-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--sidebar-accent)]",
                 )}
-                style={{
-                  background: isActive
-                    ? "color-mix(in srgb, var(--sidebar-primary) 12%, transparent)"
-                    : "transparent",
-                  color: isActive ? "var(--sidebar-primary)" : "var(--sidebar-foreground)",
-                }}
-                onMouseEnter={(e) => {
-                  if (!isActive) e.currentTarget.style.background = "color-mix(in srgb, var(--sidebar-primary) 6%, transparent)";
-                }}
-                onMouseLeave={(e) => {
-                  if (!isActive) e.currentTarget.style.background = "transparent";
-                }}
+                style={
+                  isActive
+                    ? {
+                        background:
+                          "color-mix(in srgb, var(--primary) 10%, transparent)",
+                      }
+                    : {}
+                }
               >
-                <Icon
-                  className="flex-shrink-0"
-                  size={20}
-                  style={{ color: isActive ? "var(--sidebar-primary)" : "var(--sidebar-foreground)" }}
-                />
+                <Icon size={16} className="flex-shrink-0" />
                 <motion.span
                   animate={{
-                    display: animate ? (open ? "inline-block" : "none") : "inline-block",
+                    display: animate ? (open ? "block" : "none") : "block",
                     opacity: animate ? (open ? 1 : 0) : 1,
                   }}
-                  className="text-sm whitespace-pre font-medium group-hover/link:translate-x-0.5 transition-transform duration-150"
-                  style={{
-                    fontWeight: isActive ? "600" : "400",
-                  }}
+                  className="whitespace-nowrap font-medium"
                 >
-                  {item.label}
+                  {label}
                 </motion.span>
               </Link>
             );
           })}
-        </div>
+        </nav>
       </div>
 
-      {/* Bottom: user + logout */}
-      <div className="flex flex-col gap-2">
-        {/* Divider */}
-        <div className="h-px" style={{ background: "var(--sidebar-border)" }} />
+      {/* Bottom */}
+      <div className="px-2 pb-2 flex flex-col gap-0.5">
+        <div
+          className="h-px mx-2 mb-2"
+          style={{ background: "var(--sidebar-border)" }}
+        />
 
-        {/* User info */}
+        {/* User avatar */}
         {user && (
           <div className="flex items-center gap-3 px-2 py-2 overflow-hidden">
             <div
-              className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
+              className="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-semibold flex-shrink-0"
               style={{
-                background: "color-mix(in srgb, var(--sidebar-primary) 15%, transparent)",
-                color: "var(--sidebar-primary)",
-                border: "1px solid color-mix(in srgb, var(--sidebar-primary) 25%, transparent)",
+                background:
+                  "color-mix(in srgb, var(--primary) 18%, transparent)",
+                color: "var(--primary)",
               }}
             >
-              {(user.name ?? user.email ?? "A")[0].toUpperCase()}
+              {(user.name ?? user.email ?? "?")[0].toUpperCase()}
             </div>
             <motion.span
               animate={{
-                display: animate ? (open ? "inline-block" : "none") : "inline-block",
+                display: animate ? (open ? "block" : "none") : "block",
                 opacity: animate ? (open ? 1 : 0) : 1,
               }}
-              className="text-xs truncate whitespace-pre"
+              className="text-xs truncate whitespace-nowrap"
               style={{ color: "var(--muted-foreground)" }}
             >
               {user.name ?? user.email}
@@ -159,24 +131,28 @@ function SidebarContent({ user }: Props) {
         {/* Logout */}
         <button
           onClick={() => signOut({ callbackUrl: "/login" })}
-          className="flex items-center gap-3 px-2 py-2.5 rounded-lg transition-all w-full text-left"
-          style={{ color: "var(--muted-foreground)" }}
+          className="flex items-center gap-3 px-2 py-2 rounded-md w-full text-left text-sm transition-colors"
+          style={{ color: "var(--sidebar-foreground)" }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = "color-mix(in srgb, var(--destructive) 8%, transparent)";
-            e.currentTarget.style.color = "var(--destructive)";
+            (e.currentTarget as HTMLButtonElement).style.color =
+              "var(--destructive)";
+            (e.currentTarget as HTMLButtonElement).style.background =
+              "color-mix(in srgb, var(--destructive) 8%, transparent)";
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.background = "transparent";
-            e.currentTarget.style.color = "var(--muted-foreground)";
+            (e.currentTarget as HTMLButtonElement).style.color =
+              "var(--sidebar-foreground)";
+            (e.currentTarget as HTMLButtonElement).style.background =
+              "transparent";
           }}
         >
-          <LogOut size={20} className="flex-shrink-0" />
+          <LogOut size={16} className="flex-shrink-0" />
           <motion.span
             animate={{
-              display: animate ? (open ? "inline-block" : "none") : "inline-block",
+              display: animate ? (open ? "block" : "none") : "block",
               opacity: animate ? (open ? 1 : 0) : 1,
             }}
-            className="text-sm whitespace-pre"
+            className="whitespace-nowrap font-medium"
           >
             登出
           </motion.span>
@@ -188,7 +164,6 @@ function SidebarContent({ user }: Props) {
 
 export default function AdminSidebar({ user }: Props) {
   const [open, setOpen] = useState(false);
-
   return (
     <Sidebar open={open} setOpen={setOpen}>
       <SidebarContent user={user} />

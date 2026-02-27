@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import SessionsClient from "./SessionsClient";
+import { Plus } from "lucide-react";
 
 async function getSessions() {
   const sessions = await prisma.gameSession.findMany({
@@ -25,13 +26,13 @@ async function getSessions() {
 export default async function SessionsPage() {
   const sessions = await getSessions();
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold" style={{ fontFamily: "var(--font-serif)", color: "var(--primary)" }}>
+        <h1 className="text-2xl font-semibold tracking-tight" style={{ color: "var(--foreground)" }}>
           牌局記錄
         </h1>
-        <Link href="/admin/sessions/new" className="btn-primary px-5 py-2.5 text-sm">
-          + 新增牌局
+        <Link href="/admin/sessions/new" className="btn-primary">
+          <Plus size={14} /> 新增牌局
         </Link>
       </div>
       <SessionsClient initialSessions={sessions} />

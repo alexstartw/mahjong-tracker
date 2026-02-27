@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { ArrowRight, Loader2 } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -22,72 +24,81 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center relative overflow-hidden" style={{ background: "var(--background)" }}>
-      {/* Background texture */}
-      <div className="absolute inset-0 opacity-[0.04]" style={{
-        backgroundImage: "radial-gradient(circle at 25% 25%, var(--primary) 0%, transparent 50%), radial-gradient(circle at 75% 75%, var(--primary) 0%, transparent 50%)",
-      }} />
-      <div className="absolute inset-0 opacity-[0.025]" style={{
-        backgroundImage: "repeating-linear-gradient(45deg, var(--border) 0, var(--border) 1px, transparent 0, transparent 50%)",
-        backgroundSize: "20px 20px",
-      }} />
+    <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--background)" }}>
+      <div className="w-full max-w-sm px-6">
 
-      <div className="relative w-full max-w-sm mx-4">
         {/* Logo */}
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4"
-            style={{ background: "var(--card)", border: "1px solid color-mix(in srgb, var(--primary) 25%, transparent)", boxShadow: "0 0 30px color-mix(in srgb, var(--primary) 12%, transparent)" }}>
-            <span className="text-3xl">🀄</span>
+        <div className="mb-8">
+          <div className="flex items-center gap-2.5 mb-6">
+            <span className="text-2xl">🀄</span>
+            <span className="text-sm font-semibold" style={{ color: "var(--muted-foreground)" }}>
+              麻將記錄
+            </span>
           </div>
-          <h1 className="text-3xl font-bold" style={{ fontFamily: "var(--font-serif)", color: "var(--primary)" }}>
-            麻將記錄
+          <h1 className="text-2xl font-semibold tracking-tight" style={{ color: "var(--foreground)" }}>
+            登入後台
           </h1>
-          <p className="text-sm mt-2" style={{ color: "var(--muted-foreground)" }}>後台管理系統</p>
+          <p className="text-sm mt-1" style={{ color: "var(--muted-foreground)" }}>
+            輸入帳號密碼繼續
+          </p>
         </div>
 
-        {/* Form card */}
-        <div className="card-primary p-8">
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label className="block text-xs font-medium mb-2 tracking-widest uppercase" style={{ color: "var(--muted-foreground)" }}>
-                Email
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                placeholder="admin@mahjong.local"
-                className="input-field"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-medium mb-2 tracking-widest uppercase" style={{ color: "var(--muted-foreground)" }}>
-                密碼
-              </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                placeholder="••••••••"
-                className="input-field"
-              />
-            </div>
-            {error && (
-              <p className="text-sm text-center" style={{ color: "var(--destructive)" }}>{error}</p>
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium" style={{ color: "var(--muted-foreground)" }}>
+              電子郵件
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              placeholder="admin@mahjong.local"
+              className="input-field"
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium" style={{ color: "var(--muted-foreground)" }}>
+              密碼
+            </label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              placeholder="••••••••"
+              className="input-field"
+            />
+          </div>
+
+          {error && (
+            <p className="text-xs px-3 py-2 rounded-md" style={{ color: "var(--destructive)", background: "color-mix(in srgb, var(--destructive) 10%, transparent)" }}>
+              {error}
+            </p>
+          )}
+
+          <button type="submit" disabled={loading} className="btn-primary w-full py-2.5 mt-2">
+            {loading ? (
+              <><Loader2 size={14} className="animate-spin" /> 驗證中…</>
+            ) : (
+              <>登入 <ArrowRight size={14} /></>
             )}
-            <button type="submit" disabled={loading} className="btn-primary w-full mt-2">
-              {loading ? "驗證中…" : "登入"}
-            </button>
-          </form>
-        </div>
+          </button>
+        </form>
 
-        <p className="text-center mt-6 text-xs">
-          <a href="/calendar" style={{ color: "var(--muted-foreground)" }} className="hover:opacity-80 transition-opacity">
+        <div className="mt-6 pt-6" style={{ borderTop: "1px solid var(--border)" }}>
+          <Link
+            href="/calendar"
+            className="text-xs transition-colors"
+            style={{ color: "var(--muted-foreground)" }}
+            onMouseEnter={(e) => ((e.target as HTMLAnchorElement).style.color = "var(--foreground)")}
+            onMouseLeave={(e) => ((e.target as HTMLAnchorElement).style.color = "var(--muted-foreground)")}
+          >
             ← 回到公開行事曆
-          </a>
-        </p>
+          </Link>
+        </div>
       </div>
     </div>
   );
