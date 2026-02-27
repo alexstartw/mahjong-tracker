@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { ArrowLeft, Check, Loader2 } from "lucide-react";
 
 interface Player { id: string; name: string; isGuest: boolean; }
 interface Selected { playerId: string; name: string; amount: string; }
@@ -9,12 +10,12 @@ interface Selected { playerId: string; name: string; amount: string; }
 export default function NewSessionClient({ players }: { players: Player[] }) {
   const router = useRouter();
   const today = new Date().toISOString().split("T")[0];
-  const [date, setDate] = useState(today);
-  const [venue, setVenue] = useState("");
-  const [stakes, setStakes] = useState("");
-  const [note, setNote] = useState("");
+  const [date, setDate]       = useState(today);
+  const [venue, setVenue]     = useState("");
+  const [stakes, setStakes]   = useState("");
+  const [note, setNote]       = useState("");
   const [selected, setSelected] = useState<Selected[]>([]);
-  const [error, setError] = useState("");
+  const [error, setError]     = useState("");
   const [loading, setLoading] = useState(false);
 
   function togglePlayer(p: Player) {
@@ -33,7 +34,7 @@ export default function NewSessionClient({ players }: { players: Player[] }) {
     const n = parseInt(p.amount || "0", 10);
     return sum + (isNaN(n) ? 0 : n);
   }, 0);
-  const isBalanced = total === 0;
+  const isBalanced = selected.length > 0 && total === 0;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -47,7 +48,10 @@ export default function NewSessionClient({ players }: { players: Player[] }) {
     const res = await fetch("/api/sessions", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ date, venue, stakes, note, players: selected.map((p) => ({ playerId: p.playerId, amount: parseInt(p.amount, 10) })) }),
+      body: JSON.stringify({
+        date, venue, stakes, note,
+        players: selected.map((p) => ({ playerId: p.playerId, amount: parseInt(p.amount, 10) })),
+      }),
     });
     setLoading(false);
     if (!res.ok) { const d = await res.json(); setError(d.error ?? "建立失敗"); return; }
@@ -56,62 +60,72 @@ export default function NewSessionClient({ players }: { players: Player[] }) {
   }
 
   return (
-    <div className="max-w-2xl space-y-6">
-      <div className="flex items-center gap-4">
-        <button onClick={() => router.back()} className="btn-ghost w-9 h-9 flex items-center justify-center p-0 rounded-full">
-          ←
+    <div className="max-w-xl space-y-5">
+      {/* Header */}
+      <div className="flex items-center gap-3">
+        <button onClick={() => router.back()} className="btn-ghost p-2 rounded-md" style={{ padding: "0.375rem" }}>
+          <ArrowLeft size={16} />
         </button>
-        <h1 className="text-3xl font-bold" style={{ fontFamily: "var(--font-playfair)", color: "#c9a84c" }}>
+        <h1 className="text-2xl font-semibold tracking-tight" style={{ color: "var(--foreground)" }}>
           新增牌局
         </h1>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-5">
-        {/* 基本資訊 */}
-        <div className="card p-6 space-y-4">
-          <h2 className="text-xs tracking-widest uppercase mb-4" style={{ color: "#4a4335" }}>基本資訊</h2>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs mb-2" style={{ color: "#a89b7e" }}>日期</label>
-              <input type="date" value={date} onChange={(e) => setDate(e.target.value)} required className="input-dark" />
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Basic info */}
+        <div className="card p-5 space-y-4">
+          <p className="text-xs font-medium uppercase tracking-wider" style={{ color: "var(--muted-foreground)" }}>
+            基本資訊
+          </p>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <label className="text-xs" style={{ color: "var(--muted-foreground)" }}>日期</label>
+              <input type="date" value={date} onChange={(e) => setDate(e.target.value)} required className="input-field" />
             </div>
-            <div>
-              <label className="block text-xs mb-2" style={{ color: "#a89b7e" }}>台金</label>
-              <input type="text" value={stakes} onChange={(e) => setStakes(e.target.value)} required placeholder="例：100/台" className="input-dark" />
+            <div className="space-y-1.5">
+              <label className="text-xs" style={{ color: "var(--muted-foreground)" }}>台金</label>
+              <input type="text" value={stakes} onChange={(e) => setStakes(e.target.value)} required placeholder="例：100/台" className="input-field" />
             </div>
           </div>
-          <div>
-            <label className="block text-xs mb-2" style={{ color: "#a89b7e" }}>地點</label>
-            <input type="text" value={venue} onChange={(e) => setVenue(e.target.value)} required placeholder="例：小明家" className="input-dark" />
+          <div className="space-y-1.5">
+            <label className="text-xs" style={{ color: "var(--muted-foreground)" }}>地點</label>
+            <input type="text" value={venue} onChange={(e) => setVenue(e.target.value)} required placeholder="例：小明家" className="input-field" />
           </div>
-          <div>
-            <label className="block text-xs mb-2" style={{ color: "#a89b7e" }}>備註（選填）</label>
-            <input type="text" value={note} onChange={(e) => setNote(e.target.value)} placeholder="任何備註…" className="input-dark" />
+          <div className="space-y-1.5">
+            <label className="text-xs" style={{ color: "var(--muted-foreground)" }}>備註（選填）</label>
+            <input type="text" value={note} onChange={(e) => setNote(e.target.value)} placeholder="任何備註…" className="input-field" />
           </div>
         </div>
 
-        {/* 選擇玩家 */}
-        <div className="card p-6">
-          <h2 className="text-xs tracking-widest uppercase mb-4" style={{ color: "#4a4335" }}>選擇玩家</h2>
+        {/* Player selection */}
+        <div className="card p-5 space-y-3">
+          <p className="text-xs font-medium uppercase tracking-wider" style={{ color: "var(--muted-foreground)" }}>
+            選擇玩家
+          </p>
           {players.length === 0 ? (
-            <p className="text-sm" style={{ color: "#4a4335" }}>
-              請先至<a href="/admin/players" className="mx-1" style={{ color: "#c9a84c" }}>玩家管理</a>新增玩家
+            <p className="text-sm" style={{ color: "var(--muted-foreground)" }}>
+              請先至<a href="/admin/players" style={{ color: "var(--primary)" }} className="mx-1">玩家管理</a>新增玩家
             </p>
           ) : (
             <div className="flex flex-wrap gap-2">
               {players.map((p) => {
                 const isSelected = selected.some((s) => s.playerId === p.id);
                 return (
-                  <button key={p.id} type="button" onClick={() => togglePlayer(p)}
-                    className="px-4 py-2 rounded-full text-sm transition-all"
+                  <button
+                    key={p.id}
+                    type="button"
+                    onClick={() => togglePlayer(p)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm transition-all"
                     style={{
-                      background: isSelected ? "#c9a84c" : "#1a2e20",
-                      color: isSelected ? "#0b1a10" : "#a89b7e",
-                      border: `1px solid ${isSelected ? "#c9a84c" : "#2a4530"}`,
-                      fontWeight: isSelected ? "700" : "400",
-                    }}>
+                      background: isSelected ? "color-mix(in srgb, var(--primary) 15%, transparent)" : "var(--muted)",
+                      color: isSelected ? "var(--primary)" : "var(--muted-foreground)",
+                      border: `1px solid ${isSelected ? "color-mix(in srgb, var(--primary) 35%, transparent)" : "var(--border)"}`,
+                      fontWeight: isSelected ? "500" : "400",
+                    }}
+                  >
+                    {isSelected && <Check size={12} />}
                     {p.name}
-                    {p.isGuest && <span className="ml-1 text-xs opacity-60">臨時</span>}
+                    {p.isGuest && <span className="text-[10px] opacity-60">臨時</span>}
                   </button>
                 );
               })}
@@ -119,25 +133,37 @@ export default function NewSessionClient({ players }: { players: Player[] }) {
           )}
         </div>
 
-        {/* 輸入金額 */}
+        {/* Amounts */}
         {selected.length > 0 && (
-          <div className="card p-6 space-y-4">
+          <div className="card p-5 space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-xs tracking-widest uppercase" style={{ color: "#4a4335" }}>輸贏金額</h2>
-              <span className="text-sm font-bold" style={{ fontFamily: "var(--font-playfair)", color: isBalanced ? "#4ade80" : "#f87171" }}>
-                {isBalanced ? "✓ 平衡" : `總和 ${total > 0 ? "+" : ""}${total}`}
+              <p className="text-xs font-medium uppercase tracking-wider" style={{ color: "var(--muted-foreground)" }}>
+                輸贏金額
+              </p>
+              <span
+                className="text-xs font-medium px-2 py-0.5 rounded"
+                style={{
+                  color: isBalanced ? "var(--win)" : total !== 0 ? "var(--loss)" : "var(--muted-foreground)",
+                  background: isBalanced
+                    ? "color-mix(in srgb, var(--win) 10%, transparent)"
+                    : total !== 0
+                    ? "color-mix(in srgb, var(--loss) 10%, transparent)"
+                    : "var(--muted)",
+                }}
+              >
+                {isBalanced ? "✓ 平衡" : total === 0 ? "輸入金額" : `總和 ${total > 0 ? "+" : ""}${total}`}
               </span>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               {selected.map((p) => (
-                <div key={p.playerId} className="flex items-center gap-4">
-                  <span className="w-20 text-sm shrink-0" style={{ color: "#f0ead8" }}>{p.name}</span>
+                <div key={p.playerId} className="flex items-center gap-3">
+                  <span className="w-16 text-sm shrink-0 truncate" style={{ color: "var(--foreground)" }}>{p.name}</span>
                   <input
                     type="number"
                     value={p.amount}
                     onChange={(e) => updateAmount(p.playerId, e.target.value)}
                     placeholder="贏正輸負"
-                    className="input-dark flex-1"
+                    className="input-field flex-1 tabular"
                   />
                 </div>
               ))}
@@ -145,10 +171,18 @@ export default function NewSessionClient({ players }: { players: Player[] }) {
           </div>
         )}
 
-        {error && <p className="text-sm text-center" style={{ color: "#f87171" }}>{error}</p>}
+        {error && (
+          <p className="text-xs px-3 py-2 rounded-md" style={{ color: "var(--destructive)", background: "color-mix(in srgb, var(--destructive) 10%, transparent)" }}>
+            {error}
+          </p>
+        )}
 
-        <button type="submit" disabled={loading || selected.length < 2} className="btn-gold w-full py-3">
-          {loading ? "儲存中…" : "儲存牌局"}
+        <button
+          type="submit"
+          disabled={loading || selected.length < 2}
+          className="btn-primary w-full py-2.5"
+        >
+          {loading ? <><Loader2 size={14} className="animate-spin" /> 儲存中…</> : "儲存牌局"}
         </button>
       </form>
     </div>

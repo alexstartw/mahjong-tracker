@@ -22,8 +22,8 @@ export default function AdminNav({ user }: Props) {
     <nav
       className="sticky top-0 z-20 border-b"
       style={{
-        background: "#0b1a10cc",
-        borderColor: "#2a4530",
+        background: "color-mix(in srgb, var(--background) 85%, transparent)",
+        borderColor: "var(--border)",
         backdropFilter: "blur(12px)",
       }}
     >
@@ -33,7 +33,7 @@ export default function AdminNav({ user }: Props) {
             <span className="text-xl">🀄</span>
             <span
               className="font-bold"
-              style={{ fontFamily: "var(--font-playfair)", color: "#c9a84c" }}
+              style={{ fontFamily: "var(--font-serif)", color: "var(--primary)" }}
             >
               麻將記錄
             </span>
@@ -50,9 +50,9 @@ export default function AdminNav({ user }: Props) {
                   href={item.href}
                   className="px-4 py-1.5 rounded-lg text-sm transition-all"
                   style={{
-                    background: isActive ? "#c9a84c20" : "transparent",
-                    color: isActive ? "#c9a84c" : "#a89b7e",
-                    border: isActive ? "1px solid #c9a84c40" : "1px solid transparent",
+                    background: isActive ? "color-mix(in srgb, var(--primary) 12%, transparent)" : "transparent",
+                    color: isActive ? "var(--primary)" : "var(--muted-foreground)",
+                    border: isActive ? "1px solid color-mix(in srgb, var(--primary) 25%, transparent)" : "1px solid transparent",
                     fontWeight: isActive ? "600" : "400",
                   }}
                 >
@@ -63,7 +63,7 @@ export default function AdminNav({ user }: Props) {
           </div>
 
           <div className="flex items-center gap-3">
-            <span className="text-xs hidden sm:block" style={{ color: "#4a4335" }}>
+            <span className="text-xs hidden sm:block" style={{ color: "var(--muted-foreground)" }}>
               {user?.name ?? user?.email}
             </span>
             <button
