@@ -21,7 +21,11 @@ async function getCalendarData(year: number, month: number) {
     stakes: s.stakes,
     playerCount: s.players.length,
     players: s.players
-      .map((sp) => ({ name: sp.player.name, amount: sp.amount }))
+      .map((sp) => ({
+        id: sp.playerId,
+        name: sp.player.name,
+        amount: sp.amount,
+      }))
       .sort((a, b) => b.amount - a.amount),
   }));
 }

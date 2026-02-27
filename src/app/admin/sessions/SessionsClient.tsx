@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 interface SessionPlayer {
   id: string;
@@ -18,107 +19,101 @@ interface Session {
   players: SessionPlayer[];
 }
 
-interface Props {
-  initialSessions: Session[];
-}
-
-export default function SessionsClient({ initialSessions }: Props) {
+export default function SessionsClient({ initialSessions }: { initialSessions: Session[] }) {
   const router = useRouter();
 
   async function handleDelete(id: string) {
-    if (!confirm("確定要刪除這場牌局嗎？")) return;
+    if (!confirm("確定要刪除這場牌局記錄？")) return;
     await fetch(`/api/sessions/${id}`, { method: "DELETE" });
     router.refresh();
   }
 
   if (initialSessions.length === 0) {
     return (
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-12 text-center">
-        <p className="text-gray-400 mb-4">尚無牌局記錄</p>
-        <a
-          href="/admin/sessions/new"
-          className="text-green-600 hover:underline text-sm font-medium"
-        >
-          新增第一場牌局
-        </a>
+      <div className="card p-16 text-center">
+        <p className="text-4xl mb-4">🀄</p>
+        <p className="mb-6" style={{ color: "#4a4335" }}>尚無牌局記錄</p>
+        <Link href="/admin/sessions/new" className="btn-gold px-6 py-2.5 text-sm inline-block">
+          記錄第一場
+        </Link>
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {initialSessions.map((session) => {
         const date = new Date(session.date);
-        const winners = session.players.filter((p) => p.amount > 0);
-        const losers = session.players.filter((p) => p.amount < 0);
+        const winners = session.players.filter((p) => p.amount > 0).sort((a, b) => b.amount - a.amount);
+        const losers = session.players.filter((p) => p.amount < 0).sort((a, b) => a.amount - b.amount);
 
         return (
-          <div
-            key={session.id}
-            className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"
-          >
-            <div className="flex items-start justify-between mb-4">
-              <div>
-                <div className="flex items-center gap-3 mb-1">
-                  <span className="font-semibold text-gray-800">
-                    {date.toLocaleDateString("zh-TW", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
-                  </span>
-                  <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">
+          <div key={session.id} className="card overflow-hidden transition-all" style={{ borderColor: "#2a4530" }}
+            onMouseEnter={(e) => (e.currentTarget.style.borderColor = "#3d6347")}
+            onMouseLeave={(e) => (e.currentTarget.style.borderColor = "#2a4530")}>
+            <div className="px-6 py-4 flex items-start justify-between gap-4">
+              {/* Date column */}
+              <div className="shrink-0 text-center w-12 pt-0.5">
+                <p className="text-2xl font-bold" style={{ fontFamily: "var(--font-playfair)", color: "#c9a84c" }}>
+                  {date.getUTCDate()}
+                </p>
+                <p className="text-xs" style={{ color: "#4a4335" }}>
+                  {date.toLocaleDateString("zh-TW", { month: "short", timeZone: "UTC" })}
+                </p>
+              </div>
+
+              {/* Info */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="font-medium" style={{ color: "#f0ead8" }}>📍 {session.venue}</span>
+                  <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: "#1a2e20", color: "#a89b7e", border: "1px solid #2a4530" }}>
                     {session.stakes}
                   </span>
+                  {session.note && (
+                    <span className="text-xs" style={{ color: "#4a4335" }}>{session.note}</span>
+                  )}
                 </div>
-                <p className="text-sm text-gray-500">📍 {session.venue}</p>
-                {session.note && (
-                  <p className="text-sm text-gray-400 mt-1">{session.note}</p>
-                )}
+
+                <div className="grid grid-cols-2 gap-4 pt-3 border-t" style={{ borderColor: "#1a2e20" }}>
+                  <div>
+                    <p className="text-xs mb-2 tracking-widest uppercase" style={{ color: "#4a4335" }}>贏</p>
+                    <div className="space-y-1">
+                      {winners.map((p) => (
+                        <Link key={p.id} href={`/players/${p.playerId}`}
+                          className="flex items-center justify-between text-sm group">
+                          <span className="group-hover:underline" style={{ color: "#a89b7e" }}>{p.name}</span>
+                          <span className="font-bold glow-win" style={{ fontFamily: "var(--font-playfair)", color: "#4ade80" }}>
+                            +{p.amount.toLocaleString()}
+                          </span>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-xs mb-2 tracking-widest uppercase" style={{ color: "#4a4335" }}>輸</p>
+                    <div className="space-y-1">
+                      {losers.map((p) => (
+                        <Link key={p.id} href={`/players/${p.playerId}`}
+                          className="flex items-center justify-between text-sm group">
+                          <span className="group-hover:underline" style={{ color: "#a89b7e" }}>{p.name}</span>
+                          <span className="font-bold glow-loss" style={{ fontFamily: "var(--font-playfair)", color: "#f87171" }}>
+                            {p.amount.toLocaleString()}
+                          </span>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </div>
-              <button
-                onClick={() => handleDelete(session.id)}
-                className="text-gray-300 hover:text-red-400 transition-colors text-sm"
-              >
+
+              {/* Delete */}
+              <button onClick={() => handleDelete(session.id)}
+                className="shrink-0 text-xs transition-colors px-2 py-1 rounded"
+                style={{ color: "#2a4530" }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "#f87171")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "#2a4530")}>
                 刪除
               </button>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-gray-50">
-              <div>
-                <p className="text-xs text-gray-400 mb-2">贏家</p>
-                <div className="space-y-1">
-                  {winners.length === 0 ? (
-                    <p className="text-sm text-gray-300">—</p>
-                  ) : (
-                    winners.map((p) => (
-                      <div key={p.id} className="flex justify-between text-sm">
-                        <span className="text-gray-700">{p.name}</span>
-                        <span className="text-green-600 font-medium">
-                          +{p.amount.toLocaleString()}
-                        </span>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
-              <div>
-                <p className="text-xs text-gray-400 mb-2">輸家</p>
-                <div className="space-y-1">
-                  {losers.length === 0 ? (
-                    <p className="text-sm text-gray-300">—</p>
-                  ) : (
-                    losers.map((p) => (
-                      <div key={p.id} className="flex justify-between text-sm">
-                        <span className="text-gray-700">{p.name}</span>
-                        <span className="text-red-500 font-medium">
-                          {p.amount.toLocaleString()}
-                        </span>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
             </div>
           </div>
         );

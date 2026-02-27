@@ -5,6 +5,7 @@ export interface CalendarDay {
 }
 
 export interface SessionPlayer {
+  id: string;
   name: string;
   amount: number;
 }
@@ -20,7 +21,7 @@ export interface SessionSummary {
 export function buildCalendarDays(
   year: number,
   month: number,
-  sessionsByDate: Map<string, SessionSummary[]>
+  sessionsByDate: Map<string, SessionSummary[]>,
 ): CalendarDay[] {
   const firstDay = new Date(year, month, 1);
   const lastDay = new Date(year, month + 1, 0);
@@ -64,7 +65,7 @@ export function groupSessionsByDate(
     stakes: string;
     playerCount: number;
     players: SessionPlayer[];
-  }[]
+  }[],
 ): Map<string, SessionSummary[]> {
   const map = new Map<string, SessionSummary[]>();
   for (const s of sessions) {
