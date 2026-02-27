@@ -13,7 +13,8 @@ async function getSessions() {
     id: s.id,
     date: s.date.toISOString(),
     venue: s.venue,
-    stakes: s.stakes,
+    base: s.base,
+    unit: s.unit,
     note: s.note,
     players: s.players.map((sp) => ({
       id: sp.id,
@@ -24,8 +25,17 @@ async function getSessions() {
   }));
 }
 
+async function getPlayers() {
+  const players = await prisma.player.findMany({ orderBy: { name: "asc" } });
+  return players.map((p) => ({ id: p.id, name: p.name, isGuest: p.isGuest }));
+}
+
 export default async function SessionsPage() {
-  const [sessions, session] = await Promise.all([getSessions(), auth()]);
+  const [sessions, players, session] = await Promise.all([
+    getSessions(),
+    getPlayers(),
+    auth(),
+  ]);
   const isLoggedIn = !!session;
   return (
     <div className="space-y-5">
@@ -42,7 +52,11 @@ export default async function SessionsPage() {
           </Link>
         )}
       </div>
-      <SessionsClient initialSessions={sessions} isLoggedIn={isLoggedIn} />
+      <SessionsClient
+        initialSessions={sessions}
+        allPlayers={players}
+        isLoggedIn={isLoggedIn}
+      />
     </div>
   );
 }

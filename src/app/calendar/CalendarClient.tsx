@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import type { MonthlyStats } from "./page";
 
 interface SessionPlayer {
   id: string;
@@ -13,7 +14,8 @@ interface SessionPlayer {
 interface SessionSummary {
   id: string;
   venue: string;
-  stakes: string;
+  base: number | null;
+  unit: number | null;
   playerCount: number;
   players: SessionPlayer[];
 }
@@ -26,6 +28,7 @@ interface Props {
   days: CalendarDayData[];
   year: number;
   month: number;
+  monthlyStats: MonthlyStats;
 }
 
 const WEEKDAYS = ["日", "一", "二", "三", "四", "五", "六"];
@@ -44,7 +47,12 @@ const MONTHS = [
   "12月",
 ];
 
-export default function CalendarClient({ days, year, month }: Props) {
+export default function CalendarClient({
+  days,
+  year,
+  month,
+  monthlyStats,
+}: Props) {
   const router = useRouter();
   const [activeDate, setActiveDate] = useState<string | null>(null);
   const [popupPos, setPopupPos] = useState<{
@@ -262,6 +270,102 @@ export default function CalendarClient({ days, year, month }: Props) {
         點擊有牌局的日期查看詳情
       </p>
 
+      {/* Monthly stats */}
+      {monthlyStats.sessionCount > 0 ? (
+        <div className="card p-5 space-y-4">
+          <h2
+            className="text-sm font-semibold"
+            style={{ color: "var(--foreground)" }}
+          >
+            本月統計
+          </h2>
+
+          {/* Summary cards */}
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              { label: "場數", value: monthlyStats.sessionCount },
+              { label: "參與人數", value: monthlyStats.playerCount },
+            ].map(({ label, value }) => (
+              <div
+                key={label}
+                className="rounded-lg p-3 text-center"
+                style={{ background: "var(--muted)" }}
+              >
+                <p
+                  className="text-xl font-bold tabular-nums"
+                  style={{ color: "var(--foreground)" }}
+                >
+                  {value}
+                </p>
+                <p
+                  className="text-xs mt-0.5"
+                  style={{ color: "var(--muted-foreground)" }}
+                >
+                  {label}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {/* Leaderboard */}
+          <div>
+            <p
+              className="text-xs font-medium mb-2"
+              style={{ color: "var(--muted-foreground)" }}
+            >
+              積分排行
+            </p>
+            <div className="space-y-1">
+              {monthlyStats.leaderboard.map((p, i) => (
+                <div
+                  key={p.id}
+                  className="flex items-center gap-3 px-3 py-2 rounded-lg"
+                  style={{
+                    background:
+                      i === 0
+                        ? "color-mix(in srgb, var(--primary) 8%, transparent)"
+                        : "transparent",
+                  }}
+                >
+                  <span
+                    className="w-5 text-xs font-semibold text-center shrink-0"
+                    style={{
+                      color:
+                        i === 0 ? "var(--primary)" : "var(--muted-foreground)",
+                    }}
+                  >
+                    {i + 1}
+                  </span>
+                  <Link
+                    href={`/players/${p.id}`}
+                    className="flex-1 text-sm hover:underline"
+                    style={{ color: "var(--foreground)" }}
+                  >
+                    {p.name}
+                  </Link>
+                  <span
+                    className="text-sm font-semibold tabular-nums"
+                    style={{
+                      color: p.amount >= 0 ? "var(--win)" : "var(--loss)",
+                    }}
+                  >
+                    {p.amount > 0 ? "+" : ""}
+                    {p.amount.toLocaleString()}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div
+          className="card p-5 text-center text-sm"
+          style={{ color: "var(--muted-foreground)" }}
+        >
+          本月尚無牌局
+        </div>
+      )}
+
       {/* Popup */}
       {activeDay && popupPos && (
         <div
@@ -330,15 +434,22 @@ export default function CalendarClient({ days, year, month }: Props) {
                     >
                       {session.venue}
                     </span>
-                    <span
-                      className="text-[10px] px-1.5 py-0.5 rounded"
-                      style={{
-                        background: "var(--muted)",
-                        color: "var(--muted-foreground)",
-                      }}
-                    >
-                      {session.stakes}
-                    </span>
+                    {(session.base != null || session.unit != null) && (
+                      <span
+                        className="text-[10px] px-1.5 py-0.5 rounded"
+                        style={{
+                          background: "var(--muted)",
+                          color: "var(--muted-foreground)",
+                        }}
+                      >
+                        {[
+                          session.base != null && `底 ${session.base}`,
+                          session.unit != null && `台 ${session.unit}`,
+                        ]
+                          .filter(Boolean)
+                          .join(" / ")}
+                      </span>
+                    )}
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">

@@ -13,7 +13,8 @@ export interface SessionPlayer {
 export interface SessionSummary {
   id: string;
   venue: string;
-  stakes: string;
+  base: number | null;
+  unit: number | null;
   playerCount: number;
   players: SessionPlayer[];
 }
@@ -62,7 +63,8 @@ export function groupSessionsByDate(
     id: string;
     date: string;
     venue: string;
-    stakes: string;
+    base: number | null;
+    unit: number | null;
     playerCount: number;
     players: SessionPlayer[];
   }[],
@@ -74,7 +76,8 @@ export function groupSessionsByDate(
     map.get(key)!.push({
       id: s.id,
       venue: s.venue,
-      stakes: s.stakes,
+      base: s.base,
+      unit: s.unit,
       playerCount: s.playerCount,
       players: s.players,
     });

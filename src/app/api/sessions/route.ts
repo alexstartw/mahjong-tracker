@@ -21,10 +21,10 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "未授權" }, { status: 401 });
   }
 
-  const { date, venue, stakes, note, players } = await req.json();
+  const { date, venue, base, unit, note, players } = await req.json();
 
-  if (!date || !venue || !stakes) {
-    return NextResponse.json({ error: "日期、地點、台金為必填" }, { status: 400 });
+  if (!date || !venue) {
+    return NextResponse.json({ error: "日期、地點為必填" }, { status: 400 });
   }
 
   if (!Array.isArray(players) || players.length < 2) {
@@ -41,7 +41,8 @@ export async function POST(req: Request) {
     data: {
       date: new Date(date),
       venue: venue.trim(),
-      stakes: stakes.trim(),
+      base: base != null ? Number(base) : null,
+      unit: unit != null ? Number(unit) : null,
       note: note?.trim() || null,
       players: {
         create: players.map((p: { playerId: string; amount: number }) => ({
